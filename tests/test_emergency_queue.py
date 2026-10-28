@@ -54,6 +54,15 @@ class EmergencyPriorityQueueTests(unittest.TestCase):
             ["P2", "P1", "P3"],
         )
 
+    def test_contains_patient_tracks_queue_membership_case_insensitively(self) -> None:
+        self.queue.enqueue(patient("P1"), 3)
+        self.assertTrue(self.queue.contains_patient(" p1 "))
+        self.assertFalse(self.queue.contains_patient("P2"))
+        self.queue.dequeue()
+        self.assertFalse(self.queue.contains_patient("P1"))
+        with self.assertRaises(ValueError):
+            self.queue.contains_patient(" ")
+
     def test_peek_does_not_remove_case(self) -> None:
         self.queue.enqueue(patient("P1"), 2)
         self.queue.enqueue(patient("P2"), 5)
