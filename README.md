@@ -75,28 +75,27 @@ All core DSA modules are connected to a text menu with input validation, a start
 
 | Module | Responsibility |
 |---|---|
-| pulseq/models.py | Validated Patient record model, guarded direct field assignment, and safe updates |
-| pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
-| pulseq/queues.py | Custom linked FIFO queue for routine patients |
-| pulseq/emergency_queue.py | Custom binary max-heap with stable FIFO ties for equal urgency |
-| pulseq/doctors.py | Doctor records, availability, specialization matching and load-aware allocation |
-| pulseq/searching.py | Manual linear ID/name search and binary search by ID on a sorted sequence |
-| pulseq/sorting.py | Manual stable merge sort and insertion sort with optional key/reverse options |
-| pulseq/cli.py | Original menu-driven CLI, startup disclaimer, input validation, and module integration |
-| pulseq/api.py | FastAPI routes around the existing DSA structures |
-| web/src/App.jsx | React dashboard for patient records, queues, doctors, and algorithm tools |
-| tests/test_api.py | FastAPI integration tests for CRUD, queues, doctors, search, and sort |
-| main.py | Original CLI entry point (`python main.py`) |
-| api_main.py / pulseq/api.py | Optional FastAPI adapter around the same DSA structures |
-| web/src/App.jsx | React operations dashboard for patients, queues, doctors, and DSA lab |
-| docs/VIVA_GUIDE.md | Viva explanations, DSA concepts, complexity, demo flow, and common questions |
-| tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
-| tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
-| tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
-| tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
-| tests/test_searching.py | Unit tests for linear and binary search, empty/missing records, duplicate names, case-insensitive matching and invalid inputs |
-| tests/test_sorting.py | Unit tests for both sorting algorithms, ordering, stability, keys, reverse order and input preservation |
-| tests/test_pulseq.py | CLI integration tests for startup, input validation, patient registration, queues, doctors, searching, sorting and exit |
+| `pulseq/models.py` | Validated patient model and guarded field assignment |
+| `pulseq/patient_store.py` | Custom singly linked list and patient CRUD |
+| `pulseq/queues.py` | Custom linked FIFO queue for routine patients |
+| `pulseq/emergency_queue.py` | Custom binary max-heap with stable FIFO ties and ID membership index |
+| `pulseq/doctors.py` | Doctor directory, availability and load-aware allocation |
+| `pulseq/searching.py` | Manual linear ID/name search and binary search |
+| `pulseq/sorting.py` | Manual merge sort and insertion sort |
+| `pulseq/cli.py` | Original menu-driven CLI |
+| `pulseq/api.py` | FastAPI routes using the same in-memory DSA structures |
+| `main.py` | CLI entry point |
+| `api_main.py` | Local FastAPI server entry point |
+| `web/src/App.jsx` | React operations dashboard |
+| `tests/test_patient_store.py` | Patient model and linked-list tests |
+| `tests/test_routine_queue.py` | Routine FIFO queue tests |
+| `tests/test_emergency_queue.py` | Emergency heap tests |
+| `tests/test_doctors.py` | Doctor directory and assignment tests |
+| `tests/test_searching.py` | Search algorithm tests |
+| `tests/test_sorting.py` | Sorting algorithm tests |
+| `tests/test_pulseq.py` | CLI integration tests |
+| `tests/test_api.py` | FastAPI integration tests |
+| `docs/VIVA_GUIDE.md` | Viva explanations, demo flow and common questions |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
 
