@@ -203,6 +203,7 @@ Let n be the number of patient records.
 | Emergency enqueue/dequeue | Custom binary max-heap with sift-up/sift-down | O(log n) |
 | Peek most urgent emergency | Heap root | O(1) |
 | Emergency priority snapshot | Copy heap and remove entries in priority order | O(n log n) |
+| Emergency queue membership | Patient-ID set lookup | O(1) average |
 | Emergency heap storage | One entry per waiting case | O(n) space |
 | Merge sort | Manual stable divide-and-conquer sort | O(n log n) |
 | Insertion sort | Manual stable comparison-based sort | O(n) best; O(n²) average/worst |
