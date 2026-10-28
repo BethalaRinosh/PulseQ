@@ -22,7 +22,7 @@ All core DSA modules are connected to a text menu with input validation, a start
 - Manual linear search finds IDs in any order and returns all case-insensitive partial name matches, including duplicate names.
 - Manual binary search finds a patient ID in a collection already sorted by normalized patient ID. It does not sort the records or use Python's `bisect` module.
 - Manual merge sort and insertion sort return sorted copies of sequences, support a custom key and reverse ordering, preserve the input, and remain stable for equal keys.
-- Menu-driven CLI supports patient CRUD, linear/name/binary search, routine FIFO queue operations, emergency priority queue operations, doctor registration/allocation, availability changes, and sorted patient displays.
+- Menu-driven CLI supports patient CRUD, linear/name/binary search, routine FIFO queue operations, emergency priority queue operations, doctor registration/allocation, availability changes, and sorting patient records by ID/name/age or emergency cases by urgency/arrival order.
 
 ## Project structure
 
@@ -232,7 +232,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 6. Doctors and allocation | Complete | Added validated doctor records, duplicate-ID protection, availability toggles, case-insensitive specialization matching, least-loaded allocation with stable registration-order ties, single active assignment per patient, release/reassignment, and unit tests. Alignment checkpoint reviewed before Step 7. |
 | 7. Searching | Complete; user reports all tests passed | Added manual linear search by ID, case-insensitive partial-name search returning all matches, and manual binary search by ID for pre-sorted records. Added edge-case tests. |
 | 8. Sorting | Complete; user reports all tests passed | Added stable merge sort and insertion sort with optional key and reverse options. Both return a new list and leave input unchanged. Added tests for ordering, empty/singleton input, stability, key-based patient sorting, reverse order, and invalid inputs. |
-| 9. CLI integration | Implemented; tests added, execution pending user run | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Added startup disclaimer, field/menu validation, friendly empty/missing handling, delete guards for waiting/assigned patients, and CLI integration tests. |
+| 9. CLI integration | Implemented; tests added, execution pending user run | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Sorting supports patient ID/name/age and emergency urgency/arrival order. Added startup disclaimer, field/menu validation, friendly empty/missing handling, delete guards for waiting/assigned patients, and CLI integration tests. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
 **Step 9 alignment checkpoint:** All planned user-facing modules are connected through the CLI. Review the project brief and the implemented menu before Step 10's full bug and edge-case audit. The app is still an educational in-memory simulation, not a production hospital system. The sorting algorithms can prepare patient records by ID for binary search, which requires sorted input.
