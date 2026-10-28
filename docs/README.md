@@ -1,3 +1,7 @@
 # Project documentation
 
-This directory is reserved for academic supporting material such as a demo walkthrough, sample console transcript, and viva notes. Additions will be made when the corresponding application features exist.
+Supporting project documentation:
+
+- [Viva and demo guide](VIVA_GUIDE.md): architecture, DSA explanations, Big-O, suggested live demo, test commands, and common viva questions.
+
+Use synthetic records only. PulseQ is an academic simulation, not a production hospital information system or clinical decision tool.
