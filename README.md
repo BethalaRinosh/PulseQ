@@ -7,8 +7,8 @@ Academic DSA micro-project built with Python 3 and the standard library.
 
 ## Project status
 
-**Current milestone:** Step 5 of 10: emergency priority queue.  
-Patient model validation, linked-list CRUD operations, the custom FIFO routine queue, and a custom binary max-heap for emergency cases are implemented. The CLI and remaining data structures are planned for later steps.
+**Current milestone:** Step 6 of 10: doctor records and specialization-aware allocation.  
+Patient model validation, linked-list CRUD operations, the custom FIFO routine queue, the emergency binary max-heap, and doctor allocation are implemented. Searching, sorting, and the CLI remain planned.
 
 ## Features
 
@@ -18,7 +18,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 - Patient age validation (integer from 0 through 130).
 - Routine patients flow through a custom linked FIFO queue with enqueue, dequeue, peek, iteration, and clear operations.
 - Emergency cases use a custom binary max-heap: urgency scores range from 1 to 5, higher scores are served first, equal scores preserve arrival order, and duplicate patient IDs are rejected while queued.
-- Doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
+- Doctor records include specialization and availability. Allocation selects an available matching specialist with the smallest active assignment count; ties preserve doctor registration order. A patient can have only one active doctor assignment.
 
 ## Project structure
 
@@ -36,7 +36,8 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
     │   ├── README.md
     │   ├── test_patient_store.py
     │   ├── test_routine_queue.py
-    │   └── test_emergency_queue.py
+    │   ├── test_emergency_queue.py
+    │   └── test_doctors.py
     ├── docs/
     │   └── README.md
     └── examples/
@@ -50,6 +51,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
 | pulseq/queues.py | Custom linked FIFO queue for routine patients |
 | pulseq/emergency_queue.py | Custom binary max-heap with stable FIFO ties for equal urgency |
+| pulseq/doctors.py | Doctor records, availability, specialization matching and load-aware allocation |
 | pulseq/doctors.py | Planned doctor directory and specialization-aware allocation |
 | pulseq/searching.py | Planned manual linear and binary search |
 | pulseq/sorting.py | Planned manual merge sort and insertion sort |
@@ -58,6 +60,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
 | tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
 | tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
+| tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
@@ -79,6 +82,10 @@ Run the patient-record tests with:
 Run the emergency-queue unit tests with:
 
     python -m unittest discover -s tests -p "test_emergency_queue.py" -v
+
+Run the doctor-directory unit tests with:
+
+    python -m unittest discover -s tests -p "test_doctors.py" -v
 
 The full application launch command, once the CLI exists, is planned to be:
 
@@ -129,6 +136,12 @@ EmergencyPriorityQueue is a custom binary max-heap backed by a Python list. It s
 
 Invalid patient types raise TypeError; urgency values must be integers 1 through 5, with booleans rejected explicitly. Duplicate patient IDs are rejected while queued, then become eligible again after dequeue.
 
+## Doctor directory and allocation behaviour
+
+`DoctorDirectory` stores doctor records in a Python list, which is permitted for the doctor directory. Doctor IDs are trimmed, uppercased and immutable after construction. Duplicate IDs are rejected. Specialization matching is case-insensitive, and unavailable doctors are excluded from new assignments.
+
+For a requested specialization, allocation chooses the available matching doctor with the smallest number of active assignments. If loads tie, registration order breaks the tie. Each patient may have only one active assignment. `release_patient()` clears that assignment and reduces the doctor's load, allowing the patient to be reassigned later. Making a doctor unavailable does not cancel existing assignments. These are scheduling demonstrations, not clinical decisions.
+
 ## Big-O complexity
 
 Let n be the number of patient records.
@@ -154,7 +167,10 @@ Let n be the number of patient records.
 | Emergency heap storage | One entry per waiting case | O(n) space |
 | Merge sort | Planned divide-and-conquer sorting | O(n log n) |
 | Insertion sort | Planned comparison-based sorting | O(n²) worst case |
-| Doctor lookup by specialization | Planned doctor list scan | O(d) |
+| Doctor registration / lookup | Duplicate scan or doctor-list traversal | O(d) |
+| Doctor allocation | Scan doctors and select least-loaded matching specialist | O(d) |
+| Find a patient's assigned doctor | Assignment dictionary lookup plus doctor lookup | O(d) |
+| Release a patient assignment | Doctor lookup and assignment update | O(d) |
 
 Here, d is the number of doctors. Registration is O(n) overall because duplicate IDs must be rejected; the physical tail append after validation is O(1). These complexity claims describe the current implementation or explicitly labelled future design.
 
@@ -176,6 +192,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 - [SudharsanSaravanan/Hospital_Mangement_System](https://github.com/SudharsanSaravanan/Hospital_Mangement_System): patient-priority project illustrating heap-based ordering and patient lookup concepts. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
 - [Sidoine20/EmergencyHospitalSystem](https://github.com/Sidoine20/EmergencyHospitalSystem): modular DSA hospital-management example. Its GitHub repository metadata declares the **MIT License**. Any adapted code would require MIT attribution and license preservation; no code has been copied.
 - [World Health Organization: Interagency Integrated Triage Tool](https://www.who.int/tools/triage): background on acuity-based prioritisation and red/yellow/green urgency categories. PulseQ will be an educational severity simulation, not an implementation or validation of a clinical protocol.
+- [kompalwargangotri/hospital-management-system-dsa](https://github.com/kompalwargangotri/hospital-management-system-dsa): reviewed for doctor-directory, specialization, availability, and duplicate-ID design ideas. License metadata was not verified; no code has been copied.
 
 ## Progress log
 
@@ -185,11 +202,11 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
 | 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
 | 4. Routine appointment queue | Implemented; isolated checks passed | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. Cleanup complexity was corrected to O(n). GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
-| 5. Emergency priority queue | Implemented; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, duplicate-ID protection, urgency validation, and unit tests. Audit found and fixed a mutable-patient-ID consistency risk by making patient IDs immutable after construction. Seven isolated behaviour checks passed, including randomized priority-order comparisons; committed unittest execution is still blocked by unavailable GitHub checkout access. |
-| 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
+| 5. Emergency priority queue | Complete; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, duplicate-ID protection, urgency validation, and unit tests. Audit found and fixed a mutable-patient-ID consistency risk by making patient IDs immutable after construction. Seven isolated behaviour checks passed; committed unittest execution remains unverified because checkout access was unavailable. |
+| 6. Doctors and allocation | Implemented; alignment checkpoint pending | Added validated doctor records, duplicate-ID protection, availability toggles, case-insensitive specialization matching, least-loaded allocation with stable registration-order ties, single active assignment per patient, release/reassignment, and unit tests. |
 | 7. Searching | Pending | Implement linear and binary search. |
 | 8. Sorting | Pending | Implement merge sort and insertion sort. |
 | 9. CLI integration | Pending | Integrate modules and add startup disclaimer and input validation. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Next:** Step 5 audit complete. Step 6 will add doctor records, availability state, and specialization-aware allocation with tests for matching, unavailable doctors, no matches, duplicate IDs, and invalid input.
+**Next:** Review Step 6 alignment against the original brief and plan. Step 7 is manual linear and binary search; do not begin it until the Step 6 checkpoint is reported.
