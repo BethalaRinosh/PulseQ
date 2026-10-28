@@ -45,6 +45,12 @@ class DoctorModelTests(unittest.TestCase):
             item.doctor_id = "D999"
         self.assertEqual(item.doctor_id, "D001")
 
+    def test_direct_availability_assignment_rejects_non_boolean(self) -> None:
+        item = doctor()
+        with self.assertRaisesRegex(ValueError, "availability"):
+            item.available = 1
+        self.assertTrue(item.available)
+
     def test_rejects_invalid_fields_and_availability(self) -> None:
         for kwargs in (
             {"doctor_id": " ", "name": "Doc", "specialization": "Cardiology", "contact": "x"},
