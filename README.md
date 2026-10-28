@@ -36,7 +36,8 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
     │   ├── queues.py
     │   ├── emergency_queue.py
     │   ├── doctors.py
-    │   └── searching.py
+    │   ├── searching.py
+    │   └── sorting.py
     ├── tests/
     │   ├── README.md
     │   ├── test_patient_store.py
