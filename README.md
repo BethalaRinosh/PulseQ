@@ -7,8 +7,8 @@ Academic DSA micro-project built with Python 3 and the standard library.
 
 ## Project status
 
-**Current milestone:** Step 4 of 10: routine patient FIFO queue.  
-Patient model validation, linked-list CRUD operations, and the custom FIFO routine queue are implemented. The CLI and remaining data structures are planned for later steps.
+**Current milestone:** Step 5 of 10: emergency priority queue.  
+Patient model validation, linked-list CRUD operations, the custom FIFO routine queue, and a custom binary max-heap for emergency cases are implemented. The CLI and remaining data structures are planned for later steps.
 
 ## Features
 
@@ -17,7 +17,8 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
 - Patient IDs are trimmed and normalised to uppercase.
 - Patient age validation (integer from 0 through 130).
 - Routine patients flow through a custom linked FIFO queue with enqueue, dequeue, peek, iteration, and clear operations.
-- Emergency priority queue, doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
+- Emergency cases use a custom binary max-heap: urgency scores range from 1 to 5, higher scores are served first, and equal scores preserve arrival order.
+- Doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
 
 ## Project structure
 
@@ -32,7 +33,8 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
     ├── tests/
     │   ├── README.md
     │   ├── test_patient_store.py
-    │   └── test_routine_queue.py
+    │   ├── test_routine_queue.py
+    │   └── test_emergency_queue.py
     ├── docs/
     │   └── README.md
     └── examples/
@@ -44,7 +46,8 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
 |---|---|
 | pulseq/models.py | Validated Patient record model and safe field updates |
 | pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
-| pulseq/queues.py | Custom linked FIFO queue for routine patients; emergency heap remains planned |
+| pulseq/queues.py | Custom linked FIFO queue for routine patients |
+| pulseq/emergency_queue.py | Custom binary max-heap with stable FIFO ties for equal urgency |
 | pulseq/doctors.py | Planned doctor directory and specialization-aware allocation |
 | pulseq/searching.py | Planned manual linear and binary search |
 | pulseq/sorting.py | Planned manual merge sort and insertion sort |
@@ -52,9 +55,10 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
 | main.py | Planned application entry point |
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
 | tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
+| tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
 
-The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue.
+The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
 
 ## Requirements and current run status
 
@@ -70,6 +74,10 @@ Run the patient-record tests with:
 
     python -m unittest discover -s tests -p "test_patient_store.py" -v
 
+Run the emergency-queue unit tests with:
+
+    python -m unittest discover -s tests -p "test_emergency_queue.py" -v
+
 The full application launch command, once the CLI exists, is planned to be:
 
     python main.py
@@ -78,7 +86,7 @@ The full suite is planned to run with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** Eight queue tests passed in a local harness reproducing the committed queue logic. A direct test run from a GitHub checkout was not possible because the local shell could not resolve github.com. The committed patient-store test file also remains to be run directly.
+**Verification note:** Eight routine-queue tests passed in a local harness reproducing the committed queue logic. The emergency-queue tests are committed, but a direct test run from a GitHub checkout has not been possible because the local shell could not resolve github.com. Test claims will be updated after the Step 5 edge-case audit.
 
 ## Patient linked-list behaviour
 
@@ -105,6 +113,20 @@ The routine queue uses custom linked nodes with head and tail references. It pre
 
 The queue accepts `Patient` objects only. After the final patient is dequeued, both endpoints are reset so later enqueues remain valid.
 
+## Emergency priority queue behaviour
+
+EmergencyPriorityQueue is a custom binary max-heap backed by a Python list. It stores EmergencyCase entries containing a patient, an urgency score, and an arrival sequence number. Urgency is a demonstration-only integer from 1 (lower) to 5 (higher), not a clinical triage scale.
+
+- enqueue(patient, urgency): validate and insert, then sift upward in O(log n).
+- peek(): return the highest-priority EmergencyCase without removal in O(1); raises IndexError when empty.
+- dequeue(): remove the root, move the final entry to the root, then sift downward in O(log n); raises IndexError when empty.
+- Equal urgency: earlier arrival is served first.
+- view_all(): return a priority-ordered snapshot without changing the live heap in O(n log n).
+- clear(): clear stored entries in O(n) because list-held references must be released.
+- is_empty() and len(queue): O(1).
+
+Invalid patient types raise TypeError; urgency values must be integers 1 through 5, with booleans rejected explicitly.
+
 ## Big-O complexity
 
 Let n be the number of patient records.
@@ -124,8 +146,10 @@ Let n be the number of patient records.
 | Linked-list storage | One node per patient | O(n) space |
 | Linear search | Planned unsorted collection search | O(n) |
 | Binary search | Planned sorted array/list | O(log n) |
-| Emergency insert/remove | Planned binary heap | O(log n) |
-| Peek most urgent emergency | Planned heap root | O(1) |
+| Emergency enqueue/dequeue | Custom binary max-heap with sift-up/sift-down | O(log n) |
+| Peek most urgent emergency | Heap root | O(1) |
+| Emergency priority snapshot | Copy heap and remove entries in priority order | O(n log n) |
+| Emergency heap storage | One entry per waiting case | O(n) space |
 | Merge sort | Planned divide-and-conquer sorting | O(n log n) |
 | Insertion sort | Planned comparison-based sorting | O(n²) worst case |
 | Doctor lookup by specialization | Planned doctor list scan | O(d) |
@@ -135,7 +159,7 @@ Here, d is the number of doctors. Registration is O(n) overall because duplicate
 ## Safety and limitations
 
 - This is an academic prototype, not a production hospital information system.
-- Severity labels, when implemented, will be for demonstration only and not a validated clinical decision tool.
+- Emergency urgency scores are for demonstration only and are not a validated clinical decision tool.
 - Use synthetic demo records only. Do not enter real patient information.
 - The current linked-list records exist in memory only and are not persisted to disk.
 - No authentication, encryption, audit-grade logging, regulatory compliance, or production database is included.
@@ -159,11 +183,11 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
 | 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
 | 4. Routine appointment queue | Complete; 8 tests passed in isolated local harness | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
-| 5. Emergency priority queue | Pending | Implement custom binary heap and stable urgency ties; run checkpoint tests. |
+| 5. Emergency priority queue | Implemented; edge-case audit pending | Added custom binary max-heap, stable FIFO tie-breaking, urgency validation, and unit tests. Run the required Step 5 bug and edge-case audit before moving on. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
 | 7. Searching | Pending | Implement linear and binary search. |
 | 8. Sorting | Pending | Implement merge sort and insertion sort. |
 | 9. CLI integration | Pending | Integrate modules and add startup disclaimer and input validation. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Next:** Step 5: implement the emergency binary-heap priority queue with stable ordering for equal urgency. Do not begin until the Step 4 review is complete.
+**Next:** Complete the Step 5 bug and edge-case audit, including empty queue operations, invalid urgency, equal-urgency ties, and heap restoration. Step 6 must wait until this checkpoint is reported.
