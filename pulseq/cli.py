@@ -264,14 +264,35 @@ class PulseQApp:
         state = "available" if updated.available else "unavailable"
         output_fn(f"{updated.doctor_id} is now {state} for new assignments.")
 
-    def _sort_patients(self, input_fn: Callable[[str], str], output_fn: Callable[[str], None]) -> None:
-        records = self.patients.view_all()
-        if not records:
-            output_fn("No patient records to sort.")
-            return
-        output_fn("Sort by: 1) Patient ID  2) Name  3) Age")
-        field_choice = self._prompt_int("Choose field: ", input_fn, output_fn, minimum=1, maximum=3)
-        keys = {1: lambda patient: patient.patient_id, 2: lambda patient: patient.name.casefold(), 3: lambda patient: patient.age}
+    def _sort_records(self, input_fn: Callable[[str], str], output_fn: Callable[[str], None]) -> None:
+        output_fn(
+            "Sort by: 1) Patient ID  2) Patient name  3) Patient age  "
+            "4) Emergency urgency  5) Emergency arrival order"
+        )
+        field_choice = self._prompt_int("Choose field: ", input_fn, output_fn, minimum=1, maximum=5)
+        if field_choice <= 3:
+            records = self.patients.view_all()
+            if not records:
+                output_fn("No patient records to sort.")
+                return
+            keys = {
+                1: lambda patient: patient.patient_id,
+                2: lambda patient: patient.name.casefold(),
+                3: lambda patient: patient.age,
+            }
+            key_fn = keys[field_choice]
+            record_type = "patients"
+        else:
+            records = self.emergency_queue.view_all()
+            if not records:
+                output_fn("No emergency cases to sort.")
+                return
+            keys = {
+                4: lambda case: case.urgency,
+                5: lambda case: case.arrival_order,
+            }
+            key_fn = keys[field_choice]
+            record_type = "emergency cases"
         output_fn("Algorithm: 1) Merge sort  2) Insertion sort")
         algorithm_choice = self._prompt_int("Choose algorithm: ", input_fn, output_fn, minimum=1, maximum=2)
         reverse_raw = self._prompt_text("Descending order? (y/n): ", input_fn, output_fn).casefold()
@@ -279,10 +300,17 @@ class PulseQApp:
             output_fn("Enter y or n.")
             reverse_raw = self._prompt_text("Descending order? (y/n): ", input_fn, output_fn).casefold()
         algorithm = merge_sort if algorithm_choice == 1 else insertion_sort
-        sorted_records = algorithm(records, key=keys[field_choice], reverse=reverse_raw == "y")
-        for patient in sorted_records:
-            self._print_patient(patient, output_fn)
-        output_fn("Sorted display only; the linked-list storage order is unchanged.")
+        sorted_records = algorithm(records, key=key_fn, reverse=reverse_raw == "y")
+        if field_choice <= 3:
+            for patient in sorted_records:
+                self._print_patient(patient, output_fn)
+        else:
+            for case in sorted_records:
+                output_fn(
+                    f"{case.patient.patient_id} | {case.patient.name} | "
+                    f"Demo urgency {case.urgency} | Arrival order {case.arrival_order}"
+                )
+        output_fn(f"Sorted {record_type} display only; live queue/storage order is unchanged.")
 
     def _print_menu(self, output_fn: Callable[[str], None]) -> None:
         output_fn("\n=== PulseQ | Hospital Management & Emergency Response (Academic Demo) ===")
@@ -321,7 +349,7 @@ class PulseQApp:
             14: lambda: self._allocate_doctor(read, output_fn),
             15: lambda: self._release_assignment(read, output_fn),
             16: lambda: self._toggle_doctor(read, output_fn),
-            17: lambda: self._sort_patients(read, output_fn),
+            17: lambda: self._sort_records(read, output_fn),
         }
         while True:
             self._print_menu(output_fn)
