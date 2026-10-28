@@ -7,7 +7,7 @@ This package contains the application's implemented modules and will grow as lat
 - `queues.py`: custom FIFO routine queue and binary-heap emergency queue.
 - `doctors.py`: doctor directory, availability, and specialization-aware allocation.
 - `searching.py`: manual linear search by ID/name and binary search by ID.
-- `sorting.py`: manual merge sort and insertion sort.
+- `sorting.py`: manual stable merge sort and insertion sort.
 - `cli.py`: menu-driven interface and input validation.
 
 These modules are added in their designated milestones as the project progresses. The core data structures are implemented directly for learning and viva explanation. Patient IDs are normalised to uppercase and immutable after construction.
@@ -29,3 +29,8 @@ These modules are added in their designated milestones as the project progresses
 ## Implemented in Step 7: searching
 
 `searching.py` implements three manual algorithms without `bisect`: `linear_search_by_id()` works on records in any order and returns one record or `None`; `linear_search_by_name()` performs case-insensitive partial matching and returns every match in input order, so duplicate names are handled; `binary_search_by_id()` returns a record or `None` using an iterative binary search. Binary search requires the caller to provide records sorted by normalized patient ID in ascending order. It intentionally does not sort or validate the whole sequence, keeping search time O(log n). Linear ID/name search is O(n).
+
+
+## Implemented in Step 8: sorting
+
+`sorting.py` provides `merge_sort(items, key=None, reverse=False)` and `insertion_sort(items, key=None, reverse=False)`. Both algorithms are implemented manually, return a new list, preserve the input sequence, and are stable when keys compare equal. A key function allows sorting patient records by ID, name, age, or another field. Merge sort is O(n log n) time with O(n) auxiliary space. Insertion sort is O(n) best-case time and O(n²) average/worst-case time; its returned copy uses O(n) space, while the shifting algorithm itself uses O(1) auxiliary space.
