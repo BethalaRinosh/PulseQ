@@ -29,7 +29,9 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
     │   ├── __init__.py
     │   ├── README.md
     │   ├── models.py
-    │   └── patient_store.py
+    │   ├── patient_store.py
+    │   ├── queues.py
+    │   └── emergency_queue.py
     ├── tests/
     │   ├── README.md
     │   ├── test_patient_store.py
@@ -86,7 +88,7 @@ The full suite is planned to run with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** Eight routine-queue tests passed in a local harness reproducing the committed queue logic. The emergency-queue tests are committed, but a direct test run from a GitHub checkout has not been possible because the local shell could not resolve github.com. Test claims will be updated after the Step 5 edge-case audit.
+**Verification note:** Eight routine-queue tests previously passed in an isolated harness. Five emergency-heap behaviour checks passed in an isolated harness covering priority order, stable ties, invalid inputs, empty/singleton operations, queue reuse, and non-mutating snapshots. These harnesses reproduce the committed logic but are not runs of the committed unittest files. A direct test run from a GitHub checkout remains unavailable because the local shell could not resolve github.com.
 
 ## Patient linked-list behaviour
 
@@ -183,7 +185,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
 | 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
 | 4. Routine appointment queue | Complete; 8 tests passed in isolated local harness | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
-| 5. Emergency priority queue | Implemented; edge-case audit pending | Added custom binary max-heap, stable FIFO tie-breaking, urgency validation, and unit tests. Run the required Step 5 bug and edge-case audit before moving on. |
+| 5. Emergency priority queue | Implemented; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, urgency validation, and unit tests. Five isolated behaviour checks passed; committed unittest execution is still blocked by unavailable GitHub checkout access. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
 | 7. Searching | Pending | Implement linear and binary search. |
 | 8. Sorting | Pending | Implement merge sort and insertion sort. |
