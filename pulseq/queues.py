@@ -22,8 +22,7 @@ class RoutineQueue:
     """First-in-first-out queue for routine patients.
 
     enqueue() adds at the tail and dequeue() removes from the head. Both are
-    O(1). This queue models routine flow only; emergency cases will use a
-    separate priority queue in a later milestone.
+    O(1). Emergency cases use a separate binary-heap priority queue.
     """
 
     def __init__(self) -> None:
@@ -85,6 +84,6 @@ class RoutineQueue:
         return list(self)
 
     def clear(self) -> None:
-        """Remove all queued patients. O(1)."""
+        """Remove all queued patients and release their linked nodes. O(n)."""
         self._head = self._tail = None
         self._size = 0
