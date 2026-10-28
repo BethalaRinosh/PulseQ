@@ -41,7 +41,8 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
     │   ├── test_patient_store.py
     │   ├── test_routine_queue.py
     │   ├── test_emergency_queue.py
-    │   └── test_doctors.py
+    │   ├── test_doctors.py
+    │   └── test_searching.py
     ├── docs/
     │   └── README.md
     └── examples/
@@ -63,6 +64,8 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
 | tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
 | tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
+| tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
+| tests/test_searching.py | Unit tests for linear and binary search, empty/missing records, duplicate names, case-insensitive matching and invalid inputs |
 | tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
 | tests/test_searching.py | Unit tests for linear and binary search, empty/missing records, duplicate names, case-insensitive matching and invalid inputs |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
