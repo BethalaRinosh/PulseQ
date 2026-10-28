@@ -165,6 +165,9 @@ class PulseQApp:
         if any(item.patient_id == patient.patient_id for item in self.routine_queue):
             output_fn("That patient is already waiting in the routine queue.")
             return
+        if any(case.patient.patient_id == patient.patient_id for case in self.emergency_queue.view_all()):
+            output_fn("Cannot add to routine queue: patient is already waiting in the emergency queue.")
+            return
         self.routine_queue.enqueue(patient)
         output_fn(f"Patient {patient.patient_id} added to the routine FIFO queue.")
 
@@ -188,6 +191,9 @@ class PulseQApp:
     def _enqueue_emergency(self, input_fn: Callable[[str], str], output_fn: Callable[[str], None]) -> None:
         patient = self._patient_by_id(input_fn, output_fn)
         if patient is None:
+            return
+        if any(item.patient_id == patient.patient_id for item in self.routine_queue):
+            output_fn("Cannot add to emergency queue: patient is already waiting in the routine queue.")
             return
         urgency = self._prompt_int("Demo urgency (1-5, higher is served first): ", input_fn, output_fn, minimum=1, maximum=5)
         self.emergency_queue.enqueue(patient, urgency)
