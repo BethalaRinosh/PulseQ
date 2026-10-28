@@ -51,6 +51,14 @@ class DoctorModelTests(unittest.TestCase):
             item.available = 1
         self.assertTrue(item.available)
 
+    def test_direct_text_field_mutations_preserve_validation(self) -> None:
+        item = doctor()
+        with self.assertRaisesRegex(ValueError, "Specialization cannot be empty"):
+            item.specialization = " "
+        with self.assertRaisesRegex(ValueError, "Doctor name cannot be empty"):
+            item.name = ""
+        self.assertEqual((item.name, item.specialization), ("Dr Asha", "Cardiology"))
+
     def test_rejects_invalid_fields_and_availability(self) -> None:
         for kwargs in (
             {"doctor_id": " ", "name": "Doc", "specialization": "Cardiology", "contact": "x"},
