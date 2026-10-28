@@ -71,7 +71,7 @@ The full suite is planned to run with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** The test file has been committed, but it has not been executed in a Python runtime in this step. Do not interpret the existence of tests as a passing test run.
+**Verification note:** An isolated local harness reproducing the committed patient model and linked-list behaviour passed 8 unit tests. The committed test file has not been executed from a repository checkout, so that remains to be verified in a later full-project audit.
 
 ## Patient linked-list behaviour
 
@@ -134,7 +134,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 |---|---|---|
 | 1. Repository and reference audit | Complete | Confirmed the repository was empty, reviewed relevant reference projects, and checked declared license metadata. |
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
-| 3. Patient records with linked list | Complete; runtime tests pending | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests covering empty records, ID normalisation, invalid age, failed updates, deletion cases, and clear. Tests were not executed in a Python runtime during this step. |
+| 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
 | 4. Routine appointment queue | Pending | Implement custom FIFO queue. |
 | 5. Emergency priority queue | Pending | Implement custom binary heap and stable urgency ties; run checkpoint tests. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
