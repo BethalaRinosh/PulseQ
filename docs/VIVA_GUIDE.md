@@ -12,6 +12,7 @@ PulseQ is a Python command-line academic prototype for hospital workflow managem
 - `PulseQApp` owns four independent structures: `PatientLinkedList`, `RoutineQueue`, `EmergencyPriorityQueue`, and `DoctorDirectory`.
 - `Patient` is the validated record model shared by the patient store and queues.
 - The CLI validates user input and calls the data-structure methods. It does not replace the custom implementations with built-in sorting, search, or queue libraries.
+- Patient and doctor models guard direct field assignments, so invalid text/age values cannot bypass validation by changing attributes later.
 - Cross-queue checks prevent the same patient from waiting in both the routine and emergency queues.
 - Patient deletion is blocked while the patient is waiting in either queue or has an active doctor assignment.
 
@@ -43,6 +44,7 @@ The heap is a Python list used as an array representation of a complete binary t
 - Enqueue inserts at the end and sifts upward: O(log n).
 - Dequeue removes the root, moves the last item to the root, and sifts downward: O(log n).
 - Peek reads the root: O(1).
+- Patient membership uses a separate ID set, so `contains_patient()` is O(1) average time without sorting or scanning the heap.
 - Higher demo urgency scores are served first. Equal scores use arrival sequence to preserve FIFO order.
 - The score 1 to 5 is an educational ordering value, not a validated clinical triage scale.
 
@@ -99,7 +101,7 @@ Run all unit and integration tests:
 python -m unittest discover -s tests -v
 ```
 
-GitHub Actions runs this command on Python 3.10, 3.12, and 3.13. The test suite includes model validation, linked-list edge cases, FIFO order, heap priority and stable ties, doctor assignment/load rules, search/sort behavior, and CLI interaction tests.
+GitHub Actions runs this command on Python 3.10, 3.12, and 3.13. The current committed suite has 92 passing tests on each version. The test suite includes model validation, linked-list edge cases, FIFO order, heap priority and stable ties, doctor assignment/load rules, search/sort behavior, and CLI interaction tests.
 
 ## 6. Common viva questions
 
