@@ -7,8 +7,8 @@ Academic DSA micro-project built with Python 3 and the standard library.
 
 ## Project status
 
-**Current milestone:** Step 7 of 10: manual patient searching.  
-Patient model validation, linked-list CRUD operations, the custom FIFO routine queue, the emergency binary max-heap, doctor allocation, and manual linear/binary search are implemented. Sorting and the CLI remain planned.
+**Current milestone:** Step 8 of 10: manual sorting algorithms.  
+Patient model validation, linked-list CRUD operations, the custom FIFO routine queue, the emergency binary max-heap, doctor allocation, manual linear/binary search, and manual merge/insertion sort are implemented. CLI integration remains planned.
 
 ## Features
 
@@ -21,6 +21,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 - Doctor records include specialization and availability. Allocation selects an available matching specialist with the smallest active assignment count; ties preserve doctor registration order. A patient can have only one active doctor assignment.
 - Manual linear search finds IDs in any order and returns all case-insensitive partial name matches, including duplicate names.
 - Manual binary search finds a patient ID in a collection already sorted by normalized patient ID. It does not sort the records or use Python's `bisect` module.
+- Manual merge sort and insertion sort return sorted copies of sequences, support a custom key and reverse ordering, preserve the input, and remain stable for equal keys.
 
 ## Project structure
 
@@ -42,7 +43,8 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
     │   ├── test_routine_queue.py
     │   ├── test_emergency_queue.py
     │   ├── test_doctors.py
-    │   └── test_searching.py
+    │   ├── test_searching.py
+    │   └── test_sorting.py
     ├── docs/
     │   └── README.md
     └── examples/
@@ -58,6 +60,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | pulseq/emergency_queue.py | Custom binary max-heap with stable FIFO ties for equal urgency |
 | pulseq/doctors.py | Doctor records, availability, specialization matching and load-aware allocation |
 | pulseq/searching.py | Manual linear ID/name search and binary search by ID on a sorted sequence |
+| pulseq/sorting.py | Manual stable merge sort and insertion sort with optional key/reverse options |
 | pulseq/sorting.py | Planned manual merge sort and insertion sort |
 | pulseq/cli.py | Planned menu-driven CLI, startup disclaimer, and input validation |
 | main.py | Planned application entry point |
@@ -66,6 +69,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
 | tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
 | tests/test_searching.py | Unit tests for linear and binary search, empty/missing records, duplicate names, case-insensitive matching and invalid inputs |
+| tests/test_sorting.py | Unit tests for both sorting algorithms, ordering, stability, keys, reverse order and input preservation |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
@@ -95,6 +99,10 @@ Run the doctor-directory unit tests with:
 Run the search-algorithm unit tests with:
 
     python -m unittest discover -s tests -p "test_searching.py" -v
+
+Run the sorting-algorithm unit tests with:
+
+    python -m unittest discover -s tests -p "test_sorting.py" -v
 
 The full application launch command, once the CLI exists, is planned to be:
 
@@ -174,8 +182,8 @@ Let n be the number of patient records.
 | Peek most urgent emergency | Heap root | O(1) |
 | Emergency priority snapshot | Copy heap and remove entries in priority order | O(n log n) |
 | Emergency heap storage | One entry per waiting case | O(n) space |
-| Merge sort | Planned divide-and-conquer sorting | O(n log n) |
-| Insertion sort | Planned comparison-based sorting | O(n²) worst case |
+| Merge sort | Manual stable divide-and-conquer sort | O(n log n) |
+| Insertion sort | Manual stable comparison-based sort | O(n) best; O(n²) average/worst |
 | Doctor registration / lookup | Duplicate scan or doctor-list traversal | O(d) |
 | Doctor allocation | Scan doctors and select least-loaded matching specialist | O(d) |
 | Find a patient's assigned doctor | Assignment dictionary lookup plus doctor lookup | O(d) |
@@ -213,9 +221,9 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 4. Routine appointment queue | Implemented; isolated checks passed | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. Cleanup complexity was corrected to O(n). GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
 | 5. Emergency priority queue | Complete; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, duplicate-ID protection, urgency validation, and unit tests. Audit found and fixed a mutable-patient-ID consistency risk by making patient IDs immutable after construction. Seven isolated behaviour checks passed; committed unittest execution remains unverified because checkout access was unavailable. |
 | 6. Doctors and allocation | Complete | Added validated doctor records, duplicate-ID protection, availability toggles, case-insensitive specialization matching, least-loaded allocation with stable registration-order ties, single active assignment per patient, release/reassignment, and unit tests. Alignment checkpoint reviewed before Step 7. |
-| 7. Searching | Implemented; tests added, execution unverified | Added manual linear search by ID, case-insensitive partial-name search returning all matches, and manual binary search by ID for pre-sorted records. Added edge-case tests. |
-| 8. Sorting | Pending | Implement merge sort and insertion sort. |
+| 7. Searching | Complete; user reports all tests passed | Added manual linear search by ID, case-insensitive partial-name search returning all matches, and manual binary search by ID for pre-sorted records. Added edge-case tests. |
+| 8. Sorting | Implemented; tests added, execution pending user run | Added stable merge sort and insertion sort with optional key and reverse options. Both return a new list and leave input unchanged. Added tests for ordering, empty/singleton input, stability, key-based patient sorting, reverse order, and invalid inputs. |
 | 9. CLI integration | Pending | Integrate modules and add startup disclaimer and input validation. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Next:** Step 8 is sorting: implement merge sort and insertion sort. Binary search requires records already sorted by normalized patient ID; its implementation intentionally does not perform an O(n) pre-check, so the O(log n) complexity remains honest. The Python documentation likewise describes binary-search utilities as operating on sorted sequences ([Python `bisect` documentation](https://docs.python.org/3/library/bisect.html)).
+**Next:** Step 9 is CLI integration. The sorting algorithms can prepare patient records by ID for binary search. Binary search requires records already sorted by normalized patient ID; it intentionally does not perform an O(n) pre-check, preserving O(log n) search time. See [Python's `bisect` documentation](https://docs.python.org/3/library/bisect.html) for the same sorted-sequence precondition.
