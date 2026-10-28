@@ -25,6 +25,8 @@ class Doctor:
     def __setattr__(self, name: str, value: object) -> None:
         if name == "doctor_id" and "doctor_id" in self.__dict__:
             raise AttributeError("Doctor ID is immutable after construction.")
+        if name == "available" and not isinstance(value, bool):
+            raise ValueError("Doctor availability must be True or False.")
         object.__setattr__(self, name, value)
 
     def __post_init__(self) -> None:
@@ -67,10 +69,10 @@ class DoctorDirectory:
         return bool(self._doctors)
 
     @staticmethod
-    def _normalise_id(doctor_id: str) -> str:
-        if not isinstance(doctor_id, str) or not doctor_id.strip():
-            raise ValueError("Doctor ID cannot be empty.")
-        return doctor_id.strip().upper()
+    def _normalise_id(identifier: str, field_name: str = "Doctor ID") -> str:
+        if not isinstance(identifier, str) or not identifier.strip():
+            raise ValueError(f"{field_name} cannot be empty.")
+        return identifier.strip().upper()
 
     @staticmethod
     def _normalise_specialization(specialization: str) -> str:
@@ -141,13 +143,13 @@ class DoctorDirectory:
 
     def assigned_doctor(self, patient_id: str) -> Doctor | None:
         """Return the patient's currently assigned doctor, if any."""
-        target = self._normalise_id(patient_id)
+        target = self._normalise_id(patient_id, "Patient ID")
         doctor_id = self._assignments.get(target)
         return self.find(doctor_id) if doctor_id is not None else None
 
     def release_patient(self, patient_id: str) -> Doctor:
         """Release a patient's active assignment and return the doctor."""
-        target = self._normalise_id(patient_id)
+        target = self._normalise_id(patient_id, "Patient ID")
         doctor_id = self._assignments.get(target)
         if doctor_id is None:
             raise KeyError(f"No active doctor assignment for patient '{target}'.")
