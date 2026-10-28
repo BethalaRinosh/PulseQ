@@ -18,8 +18,15 @@ class Patient:
     contact: str
     reason: str
 
+    def __setattr__(self, name: str, value: object) -> None:
+        if name == "patient_id" and "patient_id" in self.__dict__:
+            raise AttributeError("Patient ID is immutable after construction.")
+        object.__setattr__(self, name, value)
+
     def __post_init__(self) -> None:
-        self.patient_id = self._required_text(self.patient_id, "Patient ID").upper()
+        object.__setattr__(
+            self, "patient_id", self._required_text(self.patient_id, "Patient ID").upper()
+        )
         self.name = self._required_text(self.name, "Name")
         self.sex = self._required_text(self.sex, "Sex")
         self.contact = self._required_text(self.contact, "Contact")
