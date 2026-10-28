@@ -54,7 +54,8 @@ All core DSA modules are connected to a text menu with input validation, a start
     │   ├── test_sorting.py
     │   └── test_pulseq.py
     ├── docs/
-    │   └── README.md
+    │   ├── README.md
+    │   └── VIVA_GUIDE.md
     └── examples/
         └── README.md
 
@@ -71,6 +72,7 @@ All core DSA modules are connected to a text menu with input validation, a start
 | pulseq/sorting.py | Manual stable merge sort and insertion sort with optional key/reverse options |
 | pulseq/cli.py | Menu-driven CLI, startup disclaimer, input validation, and module integration |
 | main.py | Application entry point (`python main.py`) |
+| docs/VIVA_GUIDE.md | Viva explanations, DSA concepts, complexity, demo flow, and common questions |
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
 | tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
 | tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
@@ -80,6 +82,10 @@ All core DSA modules are connected to a text menu with input validation, a start
 | tests/test_pulseq.py | CLI integration tests for startup, input validation, patient registration, queues, doctors, searching, sorting and exit |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
+
+## Viva and demonstration guide
+
+Use [`docs/VIVA_GUIDE.md`](docs/VIVA_GUIDE.md) for a project introduction, architecture and DSA explanations, a suggested demo sequence, Big-O reasoning, test commands, and common viva questions.
 
 ## Continuous integration
 
