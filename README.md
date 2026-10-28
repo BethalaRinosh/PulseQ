@@ -23,6 +23,7 @@ All core DSA modules are connected to a text menu with input validation, a start
 - Manual binary search finds a patient ID in a collection already sorted by normalized patient ID. It does not sort the records or use Python's `bisect` module.
 - Manual merge sort and insertion sort return sorted copies of sequences, support a custom key and reverse ordering, preserve the input, and remain stable for equal keys.
 - Menu-driven CLI supports patient CRUD, linear/name/binary search, routine FIFO queue operations, emergency priority queue operations, doctor registration/allocation, availability changes, and sorting patient records by ID/name/age or emergency cases by urgency/arrival order. A patient cannot be waiting in both routine and emergency queues at the same time.
+- Optional React + Tailwind CSS dashboard backed by FastAPI, including an opt-in fictional sample workspace for demos.
 
 ## Project structure
 
@@ -167,7 +168,7 @@ Run all unit and integration tests with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** GitHub Actions has run the committed unit and integration suite successfully: 101 tests passed on each of Python 3.10, 3.12, and 3.13. The frontend production build also passed. The workflow is rerun for pushes to `main`, pull requests, and manual dispatch.
+**Verification note:** GitHub Actions has run the committed unit and integration suite successfully: 102 tests passed on each of Python 3.10, 3.12, and 3.13. The frontend production build also passed. The workflow is rerun for pushes to `main`, pull requests, and manual dispatch.
 
 ## Patient linked-list behaviour
 
