@@ -1,4 +1,4 @@
 """PulseQ academic hospital-management and emergency-response prototype.
 
-The custom data structures and algorithms will be implemented in later steps.
+The validated patient model, linked-list patient store, routine FIFO queue, and emergency binary-heap priority queue are implemented in this package.
 """
