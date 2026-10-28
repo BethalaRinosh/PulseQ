@@ -112,6 +112,6 @@ class PatientLinkedList:
         raise KeyError(f"No patient found with ID '{target}'.")
 
     def clear(self) -> None:
-        """Remove all records and release the linked nodes."""
+        """Remove all records and release the linked nodes. O(n) cleanup."""
         self._head = self._tail = None
         self._size = 0
