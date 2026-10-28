@@ -193,7 +193,7 @@ def list_routine() -> list[dict]:
     return [{"position": i, **patient_json(p)} for i, p in enumerate(routine_queue.view_all(), 1)]
 
 
-@app.post("/api/routine/{patient_id}", status_code=201)
+@app.post("/api/routine/{patient_id}/enqueue", status_code=201)
 def add_routine(patient_id: str) -> dict:
     patient = patients.find(patient_id)
     if patient is None:
@@ -216,7 +216,7 @@ def list_emergency() -> list[dict]:
     return [emergency_json(case) for case in emergency_queue.view_all()]
 
 
-@app.post("/api/emergency/{patient_id}", status_code=201)
+@app.post("/api/emergency/{patient_id}/enqueue", status_code=201)
 def add_emergency(patient_id: str, data: EmergencyIn) -> dict:
     patient = patients.find(patient_id)
     if patient is None:
