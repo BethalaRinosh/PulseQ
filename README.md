@@ -61,7 +61,6 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | pulseq/doctors.py | Doctor records, availability, specialization matching and load-aware allocation |
 | pulseq/searching.py | Manual linear ID/name search and binary search by ID on a sorted sequence |
 | pulseq/sorting.py | Manual stable merge sort and insertion sort with optional key/reverse options |
-| pulseq/sorting.py | Planned manual merge sort and insertion sort |
 | pulseq/cli.py | Planned menu-driven CLI, startup disclaimer, and input validation |
 | main.py | Planned application entry point |
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
