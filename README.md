@@ -66,8 +66,6 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | tests/test_emergency_queue.py | Unit tests for heap ordering, stable ties, validation, and edge cases |
 | tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
 | tests/test_searching.py | Unit tests for linear and binary search, empty/missing records, duplicate names, case-insensitive matching and invalid inputs |
-| tests/test_doctors.py | Unit tests for doctor records, matching, availability, assignment and release |
-| tests/test_searching.py | Unit tests for linear and binary search, empty/missing records, duplicate names, case-insensitive matching and invalid inputs |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
