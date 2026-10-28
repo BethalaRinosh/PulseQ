@@ -226,7 +226,8 @@ def add_emergency(patient_id: str, data: EmergencyIn) -> dict:
         emergency_queue.enqueue(patient, data.urgency)
     except (ValueError, TypeError) as error:
         fail_from_error(error)
-    return {"message": f"{patient.patient_id} added with demo urgency {data.urgency}.", "case": emergency_json(emergency_queue.peek())}
+    case = next(item for item in emergency_queue.view_all() if item.patient.patient_id == patient.patient_id)
+    return {"message": f"{patient.patient_id} added with demo urgency {data.urgency}.", "case": emergency_json(case)}
 
 
 @app.post("/api/emergency/serve")
