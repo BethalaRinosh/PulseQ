@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Bell, CalendarDays,
-  Check, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Command,
-  FileText, Filter, HeartPulse, LayoutDashboard, Menu, MoreHorizontal,
-  Plus, Search, Settings2, ShieldCheck, Stethoscope, UserRound, Users,
-  X, Zap, BedDouble, ClipboardList, ArrowUpDown, Siren, RefreshCw,
-  UserPlus, ListOrdered, Sparkles, CircleCheck, AlertCircle, LoaderCircle,
-  LogOut, PanelLeftClose, PanelLeftOpen
+  Activity, ArrowRight, ArrowUpDown, CalendarDays, Check, ChevronDown,
+  ChevronRight, CircleCheck, Clock3, HeartPulse, LayoutDashboard, ListOrdered,
+  LoaderCircle, Menu, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Plus,
+  RefreshCw, Search, ShieldCheck, Siren, Sparkles, Stethoscope, ClipboardList,
+  UserPlus, Users, X, Zap, AlertCircle
 } from "lucide-react";
 
 const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
@@ -48,10 +46,6 @@ function Status({ children, tone = "neutral" }) {
 
 function Avatar({ name, size = "md", tone }) {
   return <div className={cx("flex shrink-0 items-center justify-center rounded-xl font-bold", size === "lg" ? "h-12 w-12 text-sm" : size === "sm" ? "h-8 w-8 rounded-lg text-[10px]" : "h-10 w-10 text-xs", tone || colors[(name?.charCodeAt(0) || 0) % colors.length])}>{initials(name)}</div>;
-}
-
-function SectionHeading({ eyebrow, title, description, action }) {
-  return <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><div className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-teal-600">{eyebrow}</div><h1 className="font-display text-2xl font-extrabold tracking-tight text-ink sm:text-[28px]">{title}</h1>{description && <p className="mt-1.5 text-sm text-muted">{description}</p>}</div>{action}</div>;
 }
 
 function Panel({ children, className = "" }) {
