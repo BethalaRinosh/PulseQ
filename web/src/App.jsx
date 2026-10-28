@@ -119,8 +119,8 @@ function DoctorForm({ onSubmit, busy }) {
   </form>;
 }
 
-function QueueForm({ patients, onSubmit, busy }) {
-  const [patientId, setPatientId] = useState("");
+function QueueForm({ patients, onSubmit, busy, initialPatientId = "" }) {
+  const [patientId, setPatientId] = useState(initialPatientId);
   const [type, setType] = useState("routine");
   const [urgency, setUrgency] = useState("3");
   return <form onSubmit={(e) => { e.preventDefault(); onSubmit({ patientId, type, urgency: Number(urgency) }); }} className="space-y-5">
@@ -306,7 +306,7 @@ export default function App() {
     {modal === "newPatient" && <Modal title="Add a patient" subtitle="Create a fictional record in the linked-list directory." onClose={closeModal}><PatientForm onSubmit={createPatient} busy={busy} /></Modal>}
     {modal === "editPatient" && editing && <Modal title="Edit patient record" subtitle={`Update ${editing.patient_id}. The ID stays immutable.`} onClose={closeModal}><PatientForm key={editing.patient_id} initial={editing} onSubmit={savePatient} busy={busy} /></Modal>}
     {modal === "newDoctor" && <Modal title="Add a doctor" subtitle="Use fictional details for this academic demo." onClose={closeModal}><DoctorForm onSubmit={createDoctor} busy={busy} /></Modal>}
-    {modal === "queue" && <Modal title="Add to a queue" subtitle="Choose routine FIFO or emergency demo priority." onClose={closeModal}><QueueForm key={editing?.patient_id || "queue"} patients={patients} onSubmit={addToQueue} busy={busy} /></Modal>}
+    {modal === "queue" && <Modal title="Add to a queue" subtitle="Choose routine FIFO or emergency demo priority." onClose={closeModal}><QueueForm key={editing?.patient_id || "queue"} initialPatientId={editing?.patient_id || ""} patients={patients} onSubmit={addToQueue} busy={busy} /></Modal>}
     {modal === "assign" && <Modal title="Assign a doctor" subtitle="Match a patient to an available specialty." onClose={closeModal}><AssignForm patients={patients} doctors={doctors} onSubmit={assignDoctor} busy={busy} /></Modal>}
 
     {toast && <div role="status" className={cx("fixed bottom-5 right-5 z-[70] flex max-w-[min(92vw,420px)] items-start gap-3 rounded-2xl border bg-white px-4 py-3.5 shadow-xl", toast.type === "error" ? "border-rose-100" : "border-teal-100")}><div className={cx("mt-0.5", toast.type === "error" ? "text-rose-600" : "text-teal-600")}>{toast.type === "error" ? <AlertCircle size={17} /> : <CircleCheck size={17} />}</div><p className="flex-1 text-sm font-medium leading-5 text-ink">{toast.message}</p><button onClick={() => setToast(null)} className="text-muted hover:text-ink"><X size={15} /></button></div>}
