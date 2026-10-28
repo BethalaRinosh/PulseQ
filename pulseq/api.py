@@ -116,6 +116,35 @@ def _ensure_not_queued(patient_id: str) -> None:
         raise HTTPException(status_code=409, detail="Patient is already waiting in the emergency queue.")
 
 
+@app.post("/api/demo/seed")
+def seed_demo_data() -> dict:
+    """Load a small fictional workspace once, only when the app is empty."""
+    if len(patients) or len(doctors) or len(routine_queue) or len(emergency_queue):
+        raise HTTPException(status_code=409, detail="Demo data can only be loaded into an empty workspace.")
+    sample_patients = [
+        Patient("PQ-1001", "Asha Menon", 28, "Female", "demo-contact-01", "Routine consultation"),
+        Patient("PQ-1002", "Kabir Rao", 41, "Male", "demo-contact-02", "Follow-up visit"),
+        Patient("PQ-1003", "Mira Shah", 35, "Female", "demo-contact-03", "Demo urgent review"),
+        Patient("PQ-1004", "Arjun Das", 52, "Male", "demo-contact-04", "General assessment"),
+        Patient("PQ-1005", "Nila Joseph", 19, "Female", "demo-contact-05", "Specialist consultation"),
+    ]
+    sample_doctors = [
+        Doctor("DR-01", "Dr. Isha Nair", "Cardiology", "demo-contact"),
+        Doctor("DR-02", "Dr. Dev Kapoor", "General Medicine", "demo-contact"),
+        Doctor("DR-03", "Dr. Tara Bose", "Pediatrics", "demo-contact"),
+    ]
+    for patient in sample_patients:
+        patients.register(patient)
+    for doctor in sample_doctors:
+        doctors.register(doctor)
+    routine_queue.enqueue(sample_patients[0])
+    routine_queue.enqueue(sample_patients[1])
+    emergency_queue.enqueue(sample_patients[2], 5)
+    emergency_queue.enqueue(sample_patients[3], 3)
+    doctors.allocate_patient(sample_patients[4], "Cardiology")
+    return {"message": "Loaded fictional sample patients, queues, doctors, and one demo assignment."}
+
+
 @app.get("/api/health")
 def health() -> dict:
     return {"status": "ok", "service": "PulseQ API", "mode": "in-memory academic demo"}
