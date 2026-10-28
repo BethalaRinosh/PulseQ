@@ -21,6 +21,19 @@ class Patient:
     def __setattr__(self, name: str, value: object) -> None:
         if name == "patient_id" and "patient_id" in self.__dict__:
             raise AttributeError("Patient ID is immutable after construction.")
+        if name in {"name", "sex", "contact", "reason"}:
+            labels = {
+                "name": "Name",
+                "sex": "Sex",
+                "contact": "Contact",
+                "reason": "Reason for visit",
+            }
+            value = self._required_text(value, labels[name])
+        if name == "age":
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise ValueError("Age must be an integer.")
+            if not 0 <= value <= 130:
+                raise ValueError("Age must be between 0 and 130.")
         object.__setattr__(self, name, value)
 
     def __post_init__(self) -> None:
