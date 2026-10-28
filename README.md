@@ -7,7 +7,7 @@ Academic DSA micro-project built with Python 3 and the standard library.
 
 ## Project status
 
-**Current milestone:** Step 3 of 10: patient records using a custom singly linked list.  
+**Current milestone:** Step 4 of 10: routine patient FIFO queue.  
 Patient model validation, linked-list CRUD operations, and the custom FIFO routine queue are implemented. The CLI and remaining data structures are planned for later steps.
 
 ## Features
@@ -32,7 +32,7 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
     ├── tests/
     │   ├── README.md
     │   ├── test_patient_store.py
-│   └── test_routine_queue.py
+    │   └── test_routine_queue.py
     ├── docs/
     │   └── README.md
     └── examples/
@@ -45,7 +45,6 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
 | pulseq/models.py | Validated Patient record model and safe field updates |
 | pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
 | pulseq/queues.py | Custom linked FIFO queue for routine patients; emergency heap remains planned |
-| pulseq/queues.py | Planned custom FIFO queue and binary-heap priority queue |
 | pulseq/doctors.py | Planned doctor directory and specialization-aware allocation |
 | pulseq/searching.py | Planned manual linear and binary search |
 | pulseq/sorting.py | Planned manual merge sort and insertion sort |
@@ -55,7 +54,7 @@ Patient model validation, linked-list CRUD operations, and the custom FIFO routi
 | tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
 
-The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store.
+The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue.
 
 ## Requirements and current run status
 
@@ -79,7 +78,7 @@ The full suite is planned to run with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** An isolated local harness reproducing the committed patient model and linked-list behaviour passed 8 unit tests. The committed test file has not been executed from a repository checkout, so that remains to be verified in a later full-project audit.
+**Verification note:** Eight queue tests passed in a local harness reproducing the committed queue logic. A direct test run from a GitHub checkout was not possible because the local shell could not resolve github.com. The committed patient-store test file also remains to be run directly.
 
 ## Patient linked-list behaviour
 
@@ -125,7 +124,6 @@ Let n be the number of patient records.
 | Linked-list storage | One node per patient | O(n) space |
 | Linear search | Planned unsorted collection search | O(n) |
 | Binary search | Planned sorted array/list | O(log n) |
-| Routine enqueue/dequeue | Planned linked FIFO queue with head/tail | O(1) |
 | Emergency insert/remove | Planned binary heap | O(log n) |
 | Peek most urgent emergency | Planned heap root | O(1) |
 | Merge sort | Planned divide-and-conquer sorting | O(n log n) |
