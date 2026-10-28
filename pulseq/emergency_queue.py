@@ -32,6 +32,7 @@ class EmergencyPriorityQueue:
 
     def __init__(self) -> None:
         self._heap: list[EmergencyCase] = []
+        self._patient_ids: set[str] = set()
         self._next_arrival_order = 0
 
     def __len__(self) -> int:
@@ -63,9 +64,12 @@ class EmergencyPriorityQueue:
     def enqueue(self, patient: Patient, urgency: int) -> None:
         """Insert an emergency case and restore the heap. O(log n)."""
         self._validate(patient, urgency)
+        if patient.patient_id in self._patient_ids:
+            raise ValueError(f"Patient ID {patient.patient_id} is already in the emergency queue.")
         entry = EmergencyCase(patient, urgency, self._next_arrival_order)
         self._next_arrival_order += 1
         self._heap.append(entry)
+        self._patient_ids.add(patient.patient_id)
 
         child = len(self._heap) - 1
         while child > 0:
@@ -115,12 +119,14 @@ class EmergencyPriorityQueue:
                 )
                 parent = best
 
+        self._patient_ids.remove(highest.patient.patient_id)
         return highest
 
     def view_all(self) -> list[EmergencyCase]:
         """Return a priority-ordered snapshot without changing the heap. O(n log n)."""
         copy = EmergencyPriorityQueue()
         copy._heap = self._heap.copy()
+        copy._patient_ids = self._patient_ids.copy()
         copy._next_arrival_order = self._next_arrival_order
         ordered: list[EmergencyCase] = []
         while copy:
@@ -130,3 +136,4 @@ class EmergencyPriorityQueue:
     def clear(self) -> None:
         """Remove all waiting cases. O(n) to release stored references."""
         self._heap.clear()
+        self._patient_ids.clear()
