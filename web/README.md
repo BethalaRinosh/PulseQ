@@ -50,6 +50,7 @@ npm run preview
 - Doctor directory: add doctors, toggle availability, allocate by specialization and release assignments.
 - DSA lab: call the project's manual search and sorting algorithms.
 - Dashboard: live counts, next-up queues, recent records and doctor availability.
+- One-click fictional sample workspace for demonstrating the interface without manually entering each record. It only seeds an empty workspace.
 
 ## Important limitations
 
