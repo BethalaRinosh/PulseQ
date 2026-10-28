@@ -82,6 +82,17 @@ class EmergencyPriorityQueueTests(unittest.TestCase):
             self.queue.enqueue("not a patient", 5)  # type: ignore[arg-type]
         self.assertTrue(self.queue.is_empty())
 
+    def test_rejects_duplicate_patient_id_until_case_is_removed(self) -> None:
+        self.queue.enqueue(patient("P1"), 3)
+        with self.assertRaisesRegex(ValueError, "already in the emergency queue"):
+            self.queue.enqueue(patient("p1"), 5)
+        self.assertEqual(len(self.queue), 1)
+        self.assertEqual(self.queue.dequeue().patient.patient_id, "P1")
+
+        # Once removed, that ID may be queued again.
+        self.queue.enqueue(patient("P1"), 2)
+        self.assertEqual(self.queue.peek().patient.patient_id, "P1")
+
     def test_rejects_invalid_urgency_values(self) -> None:
         for urgency in (0, 6, -1, 1.5, "5", True, None):
             with self.subTest(urgency=urgency):
