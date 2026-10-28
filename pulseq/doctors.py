@@ -25,6 +25,13 @@ class Doctor:
     def __setattr__(self, name: str, value: object) -> None:
         if name == "doctor_id" and "doctor_id" in self.__dict__:
             raise AttributeError("Doctor ID is immutable after construction.")
+        if name in {"name", "specialization", "contact"}:
+            labels = {
+                "name": "Doctor name",
+                "specialization": "Specialization",
+                "contact": "Doctor contact",
+            }
+            value = self._required_text(value, labels[name])
         if name == "available" and not isinstance(value, bool):
             raise ValueError("Doctor availability must be True or False.")
         object.__setattr__(self, name, value)
