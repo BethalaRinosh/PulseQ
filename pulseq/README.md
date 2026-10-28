@@ -10,7 +10,7 @@ This package contains the application's implemented modules and will grow as lat
 - `sorting.py`: manual stable merge sort and insertion sort.
 - `cli.py`: menu-driven interface and input validation.
 
-These modules are added in their designated milestones as the project progresses. The core data structures are implemented directly for learning and viva explanation. Patient IDs are normalised to uppercase and immutable after construction.
+The modules are implemented in staged milestones. `cli.py` integrates them into the interactive application. The core data structures are implemented directly for learning and viva explanation. Patient IDs are normalised to uppercase and immutable after construction.
 
 ## Implemented in Step 4: routine queue
 
@@ -34,3 +34,10 @@ These modules are added in their designated milestones as the project progresses
 ## Implemented in Step 8: sorting
 
 `sorting.py` provides `merge_sort(items, key=None, reverse=False)` and `insertion_sort(items, key=None, reverse=False)`. Both algorithms are implemented manually, return a new list, preserve the input sequence, and are stable when keys compare equal. A key function allows sorting patient records by ID, name, age, or another field. Merge sort is O(n log n) time with O(n) auxiliary space. Insertion sort is O(n) best-case time and O(n²) average/worst-case time; its returned copy uses O(n) space, while the shifting algorithm itself uses O(1) auxiliary space.
+
+
+## Implemented in Step 9: command-line interface
+
+`cli.py` defines `PulseQApp`, which owns the patient linked list, routine FIFO queue, emergency max-heap, and doctor directory. The menu connects patient registration/view/update/delete, linear and binary search, sorting by ID/name/age, routine queue operations, emergency queue operations, doctor registration, specialization-aware allocation, assignment release, and availability toggles. It validates numeric menu choices and age/urgency ranges, retries empty text fields, handles missing records and empty queues with readable messages, and prevents deleting patients who are waiting in a queue or have an active doctor assignment. `main.py` starts the app with `python main.py`.
+
+The startup disclaimer clearly identifies PulseQ as an academic simulation. All records remain in memory and are discarded on exit. The urgency score is a demonstration-only ordering field, not clinical triage. Use synthetic data only.
