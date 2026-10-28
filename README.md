@@ -7,131 +7,134 @@ Academic DSA micro-project built with Python 3 and the standard library.
 
 ## Project status
 
-**Current milestone:** Step 2 of 10 — project scaffold and documentation.  
-The repository scaffold is in place. The application is not yet runnable because the CLI and core modules are intentionally deferred to later steps.
+**Current milestone:** Step 3 of 10: patient records using a custom singly linked list.  
+Patient model validation and linked-list CRUD operations are implemented. The CLI and remaining data structures are planned for later steps.
 
-## Planned features
+## Features
 
 - Patient registration and record management (create, view, update, delete).
-- First-come-first-served routine patient/appointment queue.
-- Emergency queue ordered by urgency, with stable arrival-order tie-breaking.
-- Doctor directory and allocation by specialization and availability.
-- Patient searching by ID/name and sorting by name, age, urgency, and arrival time.
-- Menu-driven CLI, input validation, and a small repeatable test suite.
+- Duplicate patient ID protection (case-insensitive IDs).
+- Patient IDs are trimmed and normalised to uppercase.
+- Patient age validation (integer from 0 through 130).
+- Routine queue, emergency priority queue, doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
 
 ## Project structure
 
-```text
-PulseQ/
-├── README.md
-├── .gitignore
-├── pulseq/
-│   ├── __init__.py
-│   └── README.md
-├── tests/
-│   └── README.md
-├── docs/
-│   └── README.md
-└── examples/
-    └── README.md
-```
+    PulseQ/
+    ├── README.md
+    ├── .gitignore
+    ├── pulseq/
+    │   ├── __init__.py
+    │   ├── README.md
+    │   ├── models.py
+    │   └── patient_store.py
+    ├── tests/
+    │   ├── README.md
+    │   └── test_patient_store.py
+    ├── docs/
+    │   └── README.md
+    └── examples/
+        └── README.md
 
-Planned modules to be added in their own milestones:
+### Module responsibilities
 
 | Module | Responsibility |
 |---|---|
-| `pulseq/models.py` | Patient and doctor record definitions |
-| `pulseq/patient_store.py` | Custom singly linked list and patient CRUD |
-| `pulseq/queues.py` | Custom FIFO queue and binary-heap priority queue |
-| `pulseq/doctors.py` | Doctor directory and specialization-aware allocation |
-| `pulseq/searching.py` | Manual linear and binary search |
-| `pulseq/sorting.py` | Manual merge sort and insertion sort |
-| `pulseq/cli.py` | Menu-driven CLI, startup disclaimer, and input validation |
-| `main.py` | Application entry point |
-| `tests/test_pulseq.py` | Built-in `unittest` coverage for core behaviours |
+| pulseq/models.py | Validated Patient record model and safe field updates |
+| pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
+| pulseq/queues.py | Planned custom FIFO queue and binary-heap priority queue |
+| pulseq/doctors.py | Planned doctor directory and specialization-aware allocation |
+| pulseq/searching.py | Planned manual linear and binary search |
+| pulseq/sorting.py | Planned manual merge sort and insertion sort |
+| pulseq/cli.py | Planned menu-driven CLI, startup disclaimer, and input validation |
+| main.py | Planned application entry point |
+| tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
+| tests/test_pulseq.py | Planned integration tests for the complete application |
 
-The scaffold contains no DSA implementations yet. This is deliberate so each algorithm can be built and reviewed in its planned step.
+The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store.
 
-## Requirements
+## Requirements and current run status
 
-- Python 3 (target: Python 3.10 or newer).
-- No third-party packages are planned; the test suite will use Python's built-in `unittest`.
+- Python 3.10 or newer is the target.
+- No third-party packages are required or planned.
+- The complete CLI is **not runnable yet** because its entry point is a later milestone.
 
-## How to run
+Run the patient-record unit tests from the repository root:
 
-**Not runnable yet.** The CLI entry point will be created during the implementation milestones. Once integrated, the intended launch command from the repository root is:
+    python -m unittest discover -s tests -p "test_patient_store.py" -v
 
-```bash
-python main.py
-```
+The full application launch command, once the CLI exists, is planned to be:
 
-The intended test command will be:
+    python main.py
 
-```bash
-python -m unittest discover -s tests -v
-```
+The full suite is planned to run with:
 
-These commands are documented as the target workflow; they will be verified after the corresponding files exist.
+    python -m unittest discover -s tests -v
 
-## Planned data structures and algorithms
+**Verification note:** The test file has been committed, but it has not been executed in a Python runtime in this step. Do not interpret the existence of tests as a passing test run.
 
-| Requirement | Planned implementation |
-|---|---|
-| Patient records | Custom singly linked list |
-| Routine flow | Custom FIFO queue |
-| Emergency flow | Custom binary heap priority queue |
-| Doctor details | Python lists/arrays |
-| Searching | Manual linear search and binary search |
-| Sorting | Manual merge sort and insertion sort |
-| Complexity documentation | Operation-by-operation Big-O table below |
+## Patient linked-list behaviour
 
-All required core DSA structures and algorithms will be implemented directly for educational clarity, not delegated to `collections.deque`, `heapq`, or built-in sorting.
+- register(patient): append at the tail after checking for a duplicate ID.
+- find(patient_id): search by case-insensitive ID.
+- view_all(): return records in insertion order.
+- update(patient_id, **changes): update name, age, sex, contact, or reason for visit after validating a candidate record.
+- delete(patient_id): remove and return a record, correctly handling head, middle, tail, and final-node removal.
+- clear(): reset the list.
+- Empty/missing lookups return None for find; update/delete raise KeyError for missing IDs; duplicate registration raises ValueError.
+
+The record model rejects empty text fields and ages outside 0–130. Patient ID is immutable through the update API.
 
 ## Big-O complexity
 
-The table will be completed as each operation is implemented and tested. Expected complexity targets for the planned structures:
+Let n be the number of patient records.
 
-| Operation | Planned structure/algorithm | Expected time |
+| Operation | Implementation | Time complexity |
 |---|---|---|
-| Find patient by ID in linked list | Linear traversal | O(n) |
-| Insert patient at linked-list head | Singly linked list | O(1) |
-| Delete patient by ID | Singly linked list | O(n) |
-| Enqueue/dequeue routine patient | Linked FIFO queue with head/tail | O(1) |
-| Insert/remove emergency case | Binary heap | O(log n) |
-| Peek most urgent emergency | Binary heap root | O(1) |
-| Linear search | Unsorted collection | O(n) |
-| Binary search | Sorted array/list | O(log n) |
-| Merge sort | Divide-and-conquer sorting | O(n log n) |
-| Insertion sort | Comparison-based sorting | O(n²) worst case |
-| Doctor lookup by specialization | Doctor list scan | O(d) |
+| Register patient | Duplicate scan plus tail append | O(n) overall; append itself is O(1) |
+| Find patient by ID | Linked-list traversal | O(n) |
+| View all records | Traverse and create a snapshot | O(n) |
+| Update patient | Find plus fixed-field validation | O(n) |
+| Delete patient by ID | Find node and relink pointers | O(n) |
+| Clear all records | Reset head/tail/size references | O(1) |
+| Linked-list storage | One node per patient | O(n) space |
+| Linear search | Planned unsorted collection search | O(n) |
+| Binary search | Planned sorted array/list | O(log n) |
+| Routine enqueue/dequeue | Planned linked FIFO queue with head/tail | O(1) |
+| Emergency insert/remove | Planned binary heap | O(log n) |
+| Peek most urgent emergency | Planned heap root | O(1) |
+| Merge sort | Planned divide-and-conquer sorting | O(n log n) |
+| Insertion sort | Planned comparison-based sorting | O(n²) worst case |
+| Doctor lookup by specialization | Planned doctor list scan | O(d) |
 
-Here, `n` is the number of patients and `d` is the number of doctors. Final documentation will distinguish best/average/worst cases where relevant and confirm the complexity against the implemented code.
+Here, d is the number of doctors. Registration is O(n) overall because duplicate IDs must be rejected; the physical tail append after validation is O(1). These complexity claims describe the current implementation or explicitly labelled future design.
 
 ## Safety and limitations
 
 - This is an academic prototype, not a production hospital information system.
-- Severity labels are for demonstration only and are not a validated clinical decision tool.
-- The prototype will not store or process real patient data; use synthetic demo records only.
+- Severity labels, when implemented, will be for demonstration only and not a validated clinical decision tool.
+- Use synthetic demo records only. Do not enter real patient information.
+- The current linked-list records exist in memory only and are not persisted to disk.
 - No authentication, encryption, audit-grade logging, regulatory compliance, or production database is included.
 - A priority score must not be treated as a substitute for a qualified clinician's assessment.
 
 ## References and credits
 
-These sources were reviewed for architecture ideas, DSA examples, testing approaches, and triage context. PulseQ will not copy their core DSA implementations.
+These sources were reviewed for architecture ideas, DSA examples, testing approaches, and triage context. PulseQ's required core DSA implementations are written directly for learning and viva explanation. No source code has been copied.
 
-- [ianberwa/hospital-system](https://github.com/ianberwa/hospital-system) — Python hospital queue/triage example using a linked FIFO queue and binary heap. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
-- [dhanushsr26/hospital-priority-queue-python](https://github.com/dhanushsr26/hospital-priority-queue-python) — patient priority queue and merge-sort example. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
-- [SudharsanSaravanan/Hospital_Mangement_System](https://github.com/SudharsanSaravanan/Hospital_Mangement_System) — patient-priority project illustrating heap-based ordering and patient lookup concepts. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
-- [Sidoine20/EmergencyHospitalSystem](https://github.com/Sidoine20/EmergencyHospitalSystem) — modular DSA hospital-management example. Its GitHub repository metadata declares the **MIT License**. We may consult its structure and tests; any adapted code would require MIT attribution and license preservation. No code has been copied.
-- [World Health Organization: Interagency Integrated Triage Tool](https://www.who.int/tools/triage) — background on acuity-based prioritisation and red/yellow/green urgency categories. PulseQ will be an educational severity simulation, not an implementation or validation of a clinical protocol.
+- [ianberwa/hospital-system](https://github.com/ianberwa/hospital-system): Python hospital queue/triage example using a linked FIFO queue and binary heap. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
+- [dhanushsr26/hospital-priority-queue-python](https://github.com/dhanushsr26/hospital-priority-queue-python): patient priority queue and merge-sort example. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
+- [SudharsanSaravanan/Hospital_Mangement_System](https://github.com/SudharsanSaravanan/Hospital_Mangement_System): patient-priority project illustrating heap-based ordering and patient lookup concepts. GitHub metadata reports **no declared license**. Reference only; do not copy code unless permission/license is established.
+- [Sidoine20/EmergencyHospitalSystem](https://github.com/Sidoine20/EmergencyHospitalSystem): modular DSA hospital-management example. Its GitHub repository metadata declares the **MIT License**. Any adapted code would require MIT attribution and license preservation; no code has been copied.
+- [World Health Organization: Interagency Integrated Triage Tool](https://www.who.int/tools/triage): background on acuity-based prioritisation and red/yellow/green urgency categories. PulseQ will be an educational severity simulation, not an implementation or validation of a clinical protocol.
 
 ## Progress log
 
 | Step | Status | Work |
 |---|---|---|
 | 1. Repository and reference audit | Complete | Confirmed the repository was empty, reviewed relevant reference projects, and checked declared license metadata. |
-| 2. Project scaffold and README | Complete | Added a package scaffold, project-area READMEs, Python-focused `.gitignore`, module responsibilities, target run/test commands, safety limitations, complexity targets, and this progress log. |
-| 3. Patient records with linked list | Pending | Implement patient CRUD and duplicate-ID protection. |
+| 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
+| 3. Patient records with linked list | Complete; runtime tests pending | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests covering empty records, ID normalisation, invalid age, failed updates, deletion cases, and clear. Tests were not executed in a Python runtime during this step. |
 | 4. Routine appointment queue | Pending | Implement custom FIFO queue. |
 | 5. Emergency priority queue | Pending | Implement custom binary heap and stable urgency ties; run checkpoint tests. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
@@ -140,4 +143,4 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 9. CLI integration | Pending | Integrate modules and add startup disclaimer and input validation. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Next:** Step 3 — implement patient records using a custom linked list. Do not begin until the Step 2 review is complete.
+**Next:** Step 4: implement the routine appointment FIFO queue. Do not begin until the Step 3 alignment checkpoint is complete.
