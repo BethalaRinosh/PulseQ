@@ -10,11 +10,11 @@ This package will contain the application's modules. Planned responsibilities:
 - `sorting.py`: manual merge sort and insertion sort.
 - `cli.py`: menu-driven interface and input validation.
 
-These modules are added in their designated milestones as the project progresses. The core data structures are implemented directly for learning and viva explanation.
+These modules are added in their designated milestones as the project progresses. The core data structures are implemented directly for learning and viva explanation. Patient IDs are normalised to uppercase and immutable after construction.
 
 ## Implemented in Step 4: routine queue
 
-`queues.py` provides `RoutineQueue`, a custom linked FIFO queue for `Patient` records. It implements `enqueue`, `dequeue`, `peek`, `is_empty`, iteration, `view_all`, and `clear`. Enqueue/dequeue/peek/empty checks are O(1); listing the queue is O(n). Empty dequeue and peek operations raise `IndexError` with clear messages. It does not use `collections.deque`.
+`queues.py` provides `RoutineQueue`, a custom linked FIFO queue for `Patient` records. It implements `enqueue`, `dequeue`, `peek`, `is_empty`, iteration, `view_all`, and `clear`. Enqueue/dequeue/peek/empty checks are O(1); listing the queue is O(n); clear is O(n) to release linked nodes. Empty dequeue and peek operations raise `IndexError` with clear messages. It does not use `collections.deque`.
 
 ## Implemented in Step 5: emergency priority queue
 
