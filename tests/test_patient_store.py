@@ -21,6 +21,12 @@ class PatientModelTests(unittest.TestCase):
     def test_id_is_trimmed_and_normalised(self) -> None:
         self.assertEqual(patient(" p-01 ").patient_id, "P-01")
 
+    def test_patient_id_cannot_be_reassigned(self) -> None:
+        item = patient("P001")
+        with self.assertRaisesRegex(AttributeError, "immutable"):
+            item.patient_id = "P999"
+        self.assertEqual(item.patient_id, "P001")
+
     def test_rejects_invalid_age(self) -> None:
         with self.assertRaises(ValueError):
             patient(age=-1)
