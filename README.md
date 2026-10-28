@@ -63,7 +63,7 @@ All core DSA modules are connected to a text menu with input validation, a start
 
 | Module | Responsibility |
 |---|---|
-| pulseq/models.py | Validated Patient record model and safe field updates |
+| pulseq/models.py | Validated Patient record model, guarded direct field assignment, and safe updates |
 | pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
 | pulseq/queues.py | Custom linked FIFO queue for routine patients |
 | pulseq/emergency_queue.py | Custom binary max-heap with stable FIFO ties for equal urgency |
@@ -134,7 +134,7 @@ Run all unit and integration tests with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** The committed unit and integration test suite is now run by GitHub Actions on Python 3.10, 3.12, and 3.13. See the latest workflow run for the authoritative result. Earlier isolated harness results are historical and are not substitutes for the committed suite.
+**Verification note:** GitHub Actions has run the committed unit and integration suite successfully: 92 tests passed on each of Python 3.10, 3.12, and 3.13. The workflow is rerun for pushes to `main`, pull requests, and manual dispatch.
 
 ## Patient linked-list behaviour
 
@@ -249,4 +249,4 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 9. CLI integration | Complete; CI verified | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Added startup disclaimer, input validation, friendly empty/missing handling, deletion guards, and CLI integration tests. |
 | 10. Final audit and verification | Complete | Completed the cross-module edge-case audit, fixed conflicting queue membership and invalid direct model mutations, added regression tests and cross-version GitHub Actions CI, and refreshed documentation. |
 
-**Step 10 audit notes:** The cross-module audit found two integrity gaps: the CLI could place one patient in both waiting queues, and validated patient/doctor text fields could later be overwritten directly with invalid values. The CLI now rejects cross-queue duplicates, and direct model assignments validate before changing stored values. Regression tests cover these cases. The CI workflow runs the complete suite across supported Python versions. The application remains an educational in-memory simulation, not a production hospital system. Binary search requires records sorted by normalized patient ID.
+**Step 10 audit notes:** The cross-module audit found two integrity gaps: the CLI could place one patient in both waiting queues, and validated patient/doctor text fields could later be overwritten directly with invalid values. The CLI now rejects cross-queue duplicates and uses the heap's patient-ID set for O(1)-average membership checks instead of sorting a snapshot just to check membership. Direct model assignments validate before changing stored values. Regression tests cover these cases. The CI workflow runs the complete suite across supported Python versions. The application remains an educational in-memory simulation, not a production hospital system. Binary search requires records sorted by normalized patient ID.
