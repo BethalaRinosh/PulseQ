@@ -33,6 +33,8 @@ All core DSA modules are connected to a text menu with input validation, a start
     │   └── workflows/
     │       └── tests.yml
     ├── main.py
+    ├── api_main.py
+    ├── requirements-web.txt
     ├── pulseq/
     │   ├── __init__.py
     │   ├── README.md
@@ -71,7 +73,9 @@ All core DSA modules are connected to a text menu with input validation, a start
 | pulseq/searching.py | Manual linear ID/name search and binary search by ID on a sorted sequence |
 | pulseq/sorting.py | Manual stable merge sort and insertion sort with optional key/reverse options |
 | pulseq/cli.py | Menu-driven CLI, startup disclaimer, input validation, and module integration |
-| main.py | Application entry point (`python main.py`) |
+| main.py | Original CLI entry point (`python main.py`) |
+| api_main.py / pulseq/api.py | Optional FastAPI adapter around the same DSA structures |
+| web/src/App.jsx | React operations dashboard for patients, queues, doctors, and DSA lab |
 | docs/VIVA_GUIDE.md | Viva explanations, DSA concepts, complexity, demo flow, and common questions |
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
 | tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
@@ -82,6 +86,23 @@ All core DSA modules are connected to a text menu with input validation, a start
 | tests/test_pulseq.py | CLI integration tests for startup, input validation, patient registration, queues, doctors, searching, sorting and exit |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
+
+## Web interface (React + FastAPI + Tailwind CSS)
+
+The optional web dashboard reuses the custom Python data structures through FastAPI. It includes a patient directory, routine and emergency queues, doctor allocation, search, sorting, and dashboard metrics. See [web/README.md](web/README.md) for setup.
+
+Start the API from the repository root:
+
+    python -m pip install -r requirements-web.txt
+    python api_main.py
+
+In a second terminal:
+
+    cd web
+    npm install
+    npm run dev
+
+Open http://127.0.0.1:5173. API docs are at http://127.0.0.1:8000/docs. The web data remains in memory and resets when the API restarts.
 
 ## Viva and demonstration guide
 
@@ -94,7 +115,7 @@ GitHub Actions runs the full unittest suite on Python 3.10, 3.12, and 3.13 for p
 ## Requirements and current run status
 
 - Python 3.10 or newer is the target.
-- No third-party packages are required or planned.
+- The original CLI and DSA modules use only the Python standard library. The optional web UI uses FastAPI/Uvicorn/Pydantic, plus React/Vite/Tailwind CSS and Lucide icons.
 - The CLI runs with Python 3.10 or newer using only the standard library.
 - All patient and doctor records are held in memory and disappear when the program exits.
 
@@ -249,4 +270,4 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 9. CLI integration | Complete; CI verified | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Added startup disclaimer, input validation, friendly empty/missing handling, deletion guards, and CLI integration tests. |
 | 10. Final audit and verification | Complete | Completed the cross-module edge-case audit, fixed conflicting queue membership and invalid direct model mutations, added regression tests and cross-version GitHub Actions CI, and refreshed documentation. |
 
-**Step 10 audit notes:** The cross-module audit found two integrity gaps: the CLI could place one patient in both waiting queues, and validated patient/doctor text fields could later be overwritten directly with invalid values. The CLI now rejects cross-queue duplicates and uses the heap's patient-ID set for O(1)-average membership checks instead of sorting a snapshot just to check membership. Direct model assignments validate before changing stored values. Regression tests cover these cases. The CI workflow runs the complete suite across supported Python versions. The application remains an educational in-memory simulation, not a production hospital system. Binary search requires records sorted by normalized patient ID.
+**Step 10 audit notes:** The cross-module audit found two integrity gaps: the CLI could place one patient in both waiting queues, and validated patient/doctor text fields could later be overwritten directly with invalid values. The CLI now rejects cross-queue duplicates and uses the heap's patient-ID set for O(1)-average membership checks instead of sorting a snapshot just to check membership. Direct model assignments validate before changing stored values. Regression tests cover these cases. The CI workflow runs the complete suite across supported Python versions and builds the React frontend. The application remains an educational in-memory simulation, not a production hospital system. Binary search requires records sorted by normalized patient ID.
