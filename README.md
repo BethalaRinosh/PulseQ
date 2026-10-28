@@ -8,7 +8,7 @@ Academic DSA micro-project built with Python 3 and the standard library.
 ## Project status
 
 **Current milestone:** Step 3 of 10: patient records using a custom singly linked list.  
-Patient model validation and linked-list CRUD operations are implemented. The CLI and remaining data structures are planned for later steps.
+Patient model validation, linked-list CRUD operations, and the custom FIFO routine queue are implemented. The CLI and remaining data structures are planned for later steps.
 
 ## Features
 
@@ -16,7 +16,8 @@ Patient model validation and linked-list CRUD operations are implemented. The CL
 - Duplicate patient ID protection (case-insensitive IDs).
 - Patient IDs are trimmed and normalised to uppercase.
 - Patient age validation (integer from 0 through 130).
-- Routine queue, emergency priority queue, doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
+- Routine patients flow through a custom linked FIFO queue with enqueue, dequeue, peek, iteration, and clear operations.
+- Emergency priority queue, doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
 
 ## Project structure
 
@@ -30,7 +31,8 @@ Patient model validation and linked-list CRUD operations are implemented. The CL
     │   └── patient_store.py
     ├── tests/
     │   ├── README.md
-    │   └── test_patient_store.py
+    │   ├── test_patient_store.py
+│   └── test_routine_queue.py
     ├── docs/
     │   └── README.md
     └── examples/
@@ -42,6 +44,7 @@ Patient model validation and linked-list CRUD operations are implemented. The CL
 |---|---|
 | pulseq/models.py | Validated Patient record model and safe field updates |
 | pulseq/patient_store.py | Custom singly linked list; patient register, find, view, update, delete, and clear |
+| pulseq/queues.py | Custom linked FIFO queue for routine patients; emergency heap remains planned |
 | pulseq/queues.py | Planned custom FIFO queue and binary-heap priority queue |
 | pulseq/doctors.py | Planned doctor directory and specialization-aware allocation |
 | pulseq/searching.py | Planned manual linear and binary search |
@@ -49,6 +52,7 @@ Patient model validation and linked-list CRUD operations are implemented. The CL
 | pulseq/cli.py | Planned menu-driven CLI, startup disclaimer, and input validation |
 | main.py | Planned application entry point |
 | tests/test_patient_store.py | Unit tests for patient model and linked-list CRUD |
+| tests/test_routine_queue.py | Unit tests for FIFO ordering and queue edge cases |
 | tests/test_pulseq.py | Planned integration tests for the complete application |
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store.
@@ -59,7 +63,11 @@ The linked list is implemented directly using nodes with patient and next fields
 - No third-party packages are required or planned.
 - The complete CLI is **not runnable yet** because its entry point is a later milestone.
 
-Run the patient-record unit tests from the repository root:
+Run the routine-queue unit tests from the repository root:
+
+    python -m unittest discover -s tests -p "test_routine_queue.py" -v
+
+Run the patient-record tests with:
 
     python -m unittest discover -s tests -p "test_patient_store.py" -v
 
@@ -85,6 +93,19 @@ The full suite is planned to run with:
 
 The record model rejects empty text fields and ages outside 0–130. Patient ID is immutable through the update API.
 
+## Routine FIFO queue behaviour
+
+The routine queue uses custom linked nodes with head and tail references. It preserves first-come-first-served order and does not use `collections.deque`.
+
+- `enqueue(patient)`: add to the tail in O(1).
+- `dequeue()`: remove and return the head in O(1); raises `IndexError` when empty.
+- `peek()`: return the head without removing it in O(1); raises `IndexError` when empty.
+- `is_empty()` and `len(queue)`: O(1).
+- `view_all()`: return a FIFO-ordered snapshot in O(n).
+- `clear()`: reset head, tail and size in O(1).
+
+The queue accepts `Patient` objects only. After the final patient is dequeued, both endpoints are reset so later enqueues remain valid.
+
 ## Big-O complexity
 
 Let n be the number of patient records.
@@ -97,6 +118,10 @@ Let n be the number of patient records.
 | Update patient | Find plus fixed-field validation | O(n) |
 | Delete patient by ID | Find node and relink pointers | O(n) |
 | Clear all records | Reset head/tail/size references | O(1) |
+| Routine enqueue | Linked queue tail pointer | O(1) |
+| Routine dequeue | Linked queue head pointer | O(1) |
+| Routine peek / empty check | Head reference / size state | O(1) |
+| Routine queue snapshot | Traverse linked nodes | O(n) |
 | Linked-list storage | One node per patient | O(n) space |
 | Linear search | Planned unsorted collection search | O(n) |
 | Binary search | Planned sorted array/list | O(log n) |
@@ -135,7 +160,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 1. Repository and reference audit | Complete | Confirmed the repository was empty, reviewed relevant reference projects, and checked declared license metadata. |
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
 | 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
-| 4. Routine appointment queue | Pending | Implement custom FIFO queue. |
+| 4. Routine appointment queue | Complete; 8 tests passed in isolated local harness | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
 | 5. Emergency priority queue | Pending | Implement custom binary heap and stable urgency ties; run checkpoint tests. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
 | 7. Searching | Pending | Implement linear and binary search. |
@@ -143,4 +168,4 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 9. CLI integration | Pending | Integrate modules and add startup disclaimer and input validation. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Next:** Step 4: implement the routine appointment FIFO queue. Do not begin until the Step 3 alignment checkpoint is complete.
+**Next:** Step 5: implement the emergency binary-heap priority queue with stable ordering for equal urgency. Do not begin until the Step 4 review is complete.
