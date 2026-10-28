@@ -100,7 +100,7 @@ The full suite is planned to run with:
 - clear(): reset the list.
 - Empty/missing lookups return None for find; update/delete raise KeyError for missing IDs; duplicate registration raises ValueError.
 
-The record model rejects empty text fields and ages outside 0–130. Patient ID is immutable through the update API.
+The record model rejects empty text fields and ages outside 0–130. Patient IDs are normalised to uppercase and cannot be reassigned after construction.
 
 ## Routine FIFO queue behaviour
 
@@ -111,9 +111,9 @@ The routine queue uses custom linked nodes with head and tail references. It pre
 - `peek()`: return the head without removing it in O(1); raises `IndexError` when empty.
 - `is_empty()` and `len(queue)`: O(1).
 - `view_all()`: return a FIFO-ordered snapshot in O(n).
-- `clear()`: reset head, tail and size in O(1).
+- `clear()`: reset head, tail and size while releasing linked nodes in O(n).
 
-The queue accepts `Patient` objects only. After the final patient is dequeued, both endpoints are reset so later enqueues remain valid.
+The queue accepts `Patient` objects only. After the final patient is dequeued, both endpoints are reset so later enqueues remain valid. Patient IDs cannot be reassigned after a `Patient` is constructed.
 
 ## Emergency priority queue behaviour
 
@@ -140,7 +140,7 @@ Let n be the number of patient records.
 | View all records | Traverse and create a snapshot | O(n) |
 | Update patient | Find plus fixed-field validation | O(n) |
 | Delete patient by ID | Find node and relink pointers | O(n) |
-| Clear all records | Reset head/tail/size references | O(1) |
+| Clear all records | Release linked nodes and reset head/tail/size | O(n) |
 | Routine enqueue | Linked queue tail pointer | O(1) |
 | Routine dequeue | Linked queue head pointer | O(1) |
 | Routine peek / empty check | Head reference / size state | O(1) |
@@ -184,12 +184,12 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 1. Repository and reference audit | Complete | Confirmed the repository was empty, reviewed relevant reference projects, and checked declared license metadata. |
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
 | 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
-| 4. Routine appointment queue | Complete; 8 tests passed in isolated local harness | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
-| 5. Emergency priority queue | Implemented; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, duplicate-ID protection, urgency validation, and unit tests. Seven isolated behaviour checks passed, including randomized priority-order comparisons; committed unittest execution is still blocked by unavailable GitHub checkout access. |
+| 4. Routine appointment queue | Implemented; isolated checks passed | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. Cleanup complexity was corrected to O(n). GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
+| 5. Emergency priority queue | Implemented; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, duplicate-ID protection, urgency validation, and unit tests. Audit found and fixed a mutable-patient-ID consistency risk by making patient IDs immutable after construction. Seven isolated behaviour checks passed, including randomized priority-order comparisons; committed unittest execution is still blocked by unavailable GitHub checkout access. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
 | 7. Searching | Pending | Implement linear and binary search. |
 | 8. Sorting | Pending | Implement merge sort and insertion sort. |
 | 9. CLI integration | Pending | Integrate modules and add startup disclaimer and input validation. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Next:** Complete the Step 5 bug and edge-case audit, including empty queue operations, invalid urgency, equal-urgency ties, and heap restoration. Step 6 must wait until this checkpoint is reported.
+**Next:** Step 5 audit complete. Step 6 will add doctor records, availability state, and specialization-aware allocation with tests for matching, unavailable doctors, no matches, duplicate IDs, and invalid input.
