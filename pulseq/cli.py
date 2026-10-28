@@ -149,7 +149,7 @@ class PulseQApp:
         if any(item.patient_id == patient_id for item in self.routine_queue):
             output_fn("Cannot delete: patient is waiting in the routine queue. Serve them first.")
             return
-        if any(case.patient.patient_id == patient_id for case in self.emergency_queue.view_all()):
+        if self.emergency_queue.contains_patient(patient_id):
             output_fn("Cannot delete: patient is waiting in the emergency queue. Serve them first.")
             return
         if self.doctors.assigned_doctor(patient_id) is not None:
@@ -165,7 +165,7 @@ class PulseQApp:
         if any(item.patient_id == patient.patient_id for item in self.routine_queue):
             output_fn("That patient is already waiting in the routine queue.")
             return
-        if any(case.patient.patient_id == patient.patient_id for case in self.emergency_queue.view_all()):
+        if self.emergency_queue.contains_patient(patient.patient_id):
             output_fn("Cannot add to routine queue: patient is already waiting in the emergency queue.")
             return
         self.routine_queue.enqueue(patient)
