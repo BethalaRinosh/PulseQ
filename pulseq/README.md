@@ -18,7 +18,7 @@ The modules are implemented in staged milestones. `cli.py` integrates them into 
 
 ## Implemented in Step 5: emergency priority queue
 
-`emergency_queue.py` provides `EmergencyPriorityQueue`, a custom binary max-heap. Each `EmergencyCase` stores a patient, an educational urgency score from 1 to 5, and an arrival sequence number. Higher urgency is served first; equal urgency preserves FIFO order. Duplicate patient IDs are rejected while queued and can be queued again after removal. `enqueue` and `dequeue` are O(log n) plus average O(1) ID-set bookkeeping, `peek` and empty checks are O(1), `view_all` is O(n log n), and `clear` is O(n) to release list-held references and clear the ID set. Invalid patient types and invalid urgency scores are rejected. The score is not a clinical triage scale.
+`emergency_queue.py` provides `EmergencyPriorityQueue`, a custom binary max-heap. Each `EmergencyCase` stores a patient, an educational urgency score from 1 to 5, and an arrival sequence number. Higher urgency is served first; equal urgency preserves FIFO order. Duplicate patient IDs are rejected while queued and can be queued again after removal. `enqueue` and `dequeue` are O(log n) plus average O(1) ID-set bookkeeping, `peek` and empty checks are O(1), `contains_patient()` checks membership in O(1) average time, `view_all` is O(n log n), and `clear` is O(n) to release list-held references and clear the ID set. Invalid patient types and invalid urgency scores are rejected. The score is not a clinical triage scale.
 
 
 ## Implemented in Step 6: doctors and allocation
