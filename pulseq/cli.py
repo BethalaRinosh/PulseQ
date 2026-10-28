@@ -321,7 +321,7 @@ class PulseQApp:
         output_fn(" 5. Delete patient          14. Allocate doctor by specialization")
         output_fn(" 6. Add to routine queue    15. Release doctor assignment")
         output_fn(" 7. View routine queue      16. Toggle doctor availability")
-        output_fn(" 8. Serve next routine      17. Sort patient display")
+        output_fn(" 8. Serve next routine      17. Sort records")
         output_fn(" 9. Add emergency case       0. Exit")
 
     def run(
