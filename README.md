@@ -168,7 +168,7 @@ Run all unit and integration tests with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** GitHub Actions has run the committed unit and integration suite successfully: 92 tests passed on each of Python 3.10, 3.12, and 3.13. The workflow is rerun for pushes to `main`, pull requests, and manual dispatch.
+**Verification note:** GitHub Actions has run the committed unit and integration suite successfully: 101 tests passed on each of Python 3.10, 3.12, and 3.13. The frontend production build also passed. The workflow is rerun for pushes to `main`, pull requests, and manual dispatch.
 
 ## Patient linked-list behaviour
 
