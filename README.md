@@ -29,6 +29,9 @@ All core DSA modules are connected to a text menu with input validation, a start
     PulseQ/
     ├── README.md
     ├── .gitignore
+    ├── .github/
+    │   └── workflows/
+    │       └── tests.yml
     ├── main.py
     ├── pulseq/
     │   ├── __init__.py
@@ -232,7 +235,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 6. Doctors and allocation | Complete | Added validated doctor records, duplicate-ID protection, availability toggles, case-insensitive specialization matching, least-loaded allocation with stable registration-order ties, single active assignment per patient, release/reassignment, and unit tests. Alignment checkpoint reviewed before Step 7. |
 | 7. Searching | Complete; user reports all tests passed | Added manual linear search by ID, case-insensitive partial-name search returning all matches, and manual binary search by ID for pre-sorted records. Added edge-case tests. |
 | 8. Sorting | Complete; user reports all tests passed | Added stable merge sort and insertion sort with optional key and reverse options. Both return a new list and leave input unchanged. Added tests for ordering, empty/singleton input, stability, key-based patient sorting, reverse order, and invalid inputs. |
-| 9. CLI integration | Implemented; tests added, execution pending user run | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Sorting supports patient ID/name/age and emergency urgency/arrival order. Added startup disclaimer, field/menu validation, friendly empty/missing handling, delete guards for waiting/assigned patients, and CLI integration tests. |
-| 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
+| 9. CLI integration | Complete | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Added startup disclaimer, input validation, friendly empty/missing handling, deletion guards, and CLI integration tests. |
+| 10. Final audit and verification | Complete pending final CI result refresh | Completed cross-module edge-case audit, fixed conflicting queue membership, added regression tests and cross-version GitHub Actions CI, and refreshed documentation. |
 
 **Step 10 audit notes:** The cross-module audit found that the same patient could be added to both the routine and emergency waiting queues. The CLI now rejects that conflicting state in either direction, with integration tests. The new CI workflow runs the complete suite across supported Python versions. The application remains an educational in-memory simulation, not a production hospital system. Binary search requires records sorted by normalized patient ID.
