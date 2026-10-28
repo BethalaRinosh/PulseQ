@@ -35,6 +35,15 @@ class PulseQApiTests(unittest.TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(result.json()["stats"]["patients"], 0)
 
+    def test_seed_demo_workspace_loads_fictional_data_once(self):
+        seeded = self.client.post("/api/demo/seed")
+        self.assertEqual(seeded.status_code, 200)
+        self.assertEqual(len(self.client.get("/api/patients").json()), 5)
+        self.assertEqual(len(self.client.get("/api/doctors").json()), 3)
+        self.assertEqual(len(self.client.get("/api/routine").json()), 2)
+        self.assertEqual(len(self.client.get("/api/emergency").json()), 2)
+        self.assertEqual(self.client.post("/api/demo/seed").status_code, 409)
+
     def test_patient_create_list_update_delete(self):
         created = self.create_patient()
         self.assertEqual(created.status_code, 201)
