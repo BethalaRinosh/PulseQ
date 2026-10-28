@@ -79,6 +79,12 @@ class EmergencyPriorityQueue:
             self._heap[child], self._heap[parent] = self._heap[parent], self._heap[child]
             child = parent
 
+    def contains_patient(self, patient_id: str) -> bool:
+        """Return whether a patient ID is waiting in the queue. O(1) average."""
+        if not isinstance(patient_id, str) or not patient_id.strip():
+            raise ValueError("Patient ID cannot be empty.")
+        return patient_id.strip().upper() in self._patient_ids
+
     def peek(self) -> EmergencyCase:
         """Return the highest-priority case without removing it. O(1)."""
         if not self._heap:
