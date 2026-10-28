@@ -132,6 +132,36 @@ class PulseQCliTests(unittest.TestCase):
         self.assertGreaterEqual(p1_position, 0)
         self.assertGreater(p2_position, p1_position)
         self.assertEqual(len(app.emergency_queue), 2)
+    def test_patient_waiting_in_routine_queue_cannot_enter_emergency_queue(self) -> None:
+        app = PulseQApp()
+        app.patients.register(self.make_patient("P1", "Asha"))
+        output: list[str] = []
+        app.run(
+            input_fn=InputSequence(["6", "P1", "9", "P1", "5", "0"]),
+            output_fn=output.append,
+        )
+        self.assertEqual(len(app.routine_queue), 1)
+        self.assertEqual(len(app.emergency_queue), 0)
+        self.assertIn(
+            "Cannot add to emergency queue: patient is already waiting in the routine queue.",
+            "\\n".join(output),
+        )
+
+    def test_patient_waiting_in_emergency_queue_cannot_enter_routine_queue(self) -> None:
+        app = PulseQApp()
+        app.patients.register(self.make_patient("P1", "Asha"))
+        output: list[str] = []
+        app.run(
+            input_fn=InputSequence(["9", "P1", "5", "6", "P1", "0"]),
+            output_fn=output.append,
+        )
+        self.assertEqual(len(app.emergency_queue), 1)
+        self.assertEqual(len(app.routine_queue), 0)
+        self.assertIn(
+            "Cannot add to routine queue: patient is already waiting in the emergency queue.",
+            "\\n".join(output),
+        )
+
     def test_delete_is_blocked_for_waiting_patient(self) -> None:
         app = PulseQApp()
         app.patients.register(self.make_patient("P1", "Asha"))
