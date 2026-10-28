@@ -31,7 +31,8 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
     │   ├── models.py
     │   ├── patient_store.py
     │   ├── queues.py
-    │   └── emergency_queue.py
+    │   ├── emergency_queue.py
+    │   └── doctors.py
     ├── tests/
     │   ├── README.md
     │   ├── test_patient_store.py
@@ -52,7 +53,6 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 | pulseq/queues.py | Custom linked FIFO queue for routine patients |
 | pulseq/emergency_queue.py | Custom binary max-heap with stable FIFO ties for equal urgency |
 | pulseq/doctors.py | Doctor records, availability, specialization matching and load-aware allocation |
-| pulseq/doctors.py | Planned doctor directory and specialization-aware allocation |
 | pulseq/searching.py | Planned manual linear and binary search |
 | pulseq/sorting.py | Planned manual merge sort and insertion sort |
 | pulseq/cli.py | Planned menu-driven CLI, startup disclaimer, and input validation |
@@ -172,7 +172,7 @@ Let n be the number of patient records.
 | Find a patient's assigned doctor | Assignment dictionary lookup plus doctor lookup | O(d) |
 | Release a patient assignment | Doctor lookup and assignment update | O(d) |
 
-Here, d is the number of doctors. Registration is O(n) overall because duplicate IDs must be rejected; the physical tail append after validation is O(1). These complexity claims describe the current implementation or explicitly labelled future design.
+Here, d is the number of doctors. Patient registration is O(n) overall because duplicate IDs must be rejected; the physical tail append after validation is O(1). Doctor allocation and lookup are O(d). These complexity claims describe the current implementation or explicitly labelled future design.
 
 ## Safety and limitations
 
