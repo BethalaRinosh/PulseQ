@@ -54,12 +54,21 @@ All core DSA modules are connected to a text menu with input validation, a start
     │   ├── test_doctors.py
     │   ├── test_searching.py
     │   ├── test_sorting.py
-    │   └── test_pulseq.py
+    │   ├── test_pulseq.py
+    │   └── test_api.py
     ├── docs/
     │   ├── README.md
     │   └── VIVA_GUIDE.md
-    └── examples/
-        └── README.md
+    ├── examples/
+    │   └── README.md
+    └── web/
+        ├── package.json
+        ├── index.html
+        ├── tailwind.config.js
+        └── src/
+            ├── App.jsx
+            ├── main.jsx
+            └── index.css
 
 ### Module responsibilities
 
@@ -72,7 +81,10 @@ All core DSA modules are connected to a text menu with input validation, a start
 | pulseq/doctors.py | Doctor records, availability, specialization matching and load-aware allocation |
 | pulseq/searching.py | Manual linear ID/name search and binary search by ID on a sorted sequence |
 | pulseq/sorting.py | Manual stable merge sort and insertion sort with optional key/reverse options |
-| pulseq/cli.py | Menu-driven CLI, startup disclaimer, input validation, and module integration |
+| pulseq/cli.py | Original menu-driven CLI, startup disclaimer, input validation, and module integration |
+| pulseq/api.py | FastAPI routes around the existing DSA structures |
+| web/src/App.jsx | React dashboard for patient records, queues, doctors, and algorithm tools |
+| tests/test_api.py | FastAPI integration tests for CRUD, queues, doctors, search, and sort |
 | main.py | Original CLI entry point (`python main.py`) |
 | api_main.py / pulseq/api.py | Optional FastAPI adapter around the same DSA structures |
 | web/src/App.jsx | React operations dashboard for patients, queues, doctors, and DSA lab |
