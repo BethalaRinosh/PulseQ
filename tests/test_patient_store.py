@@ -27,6 +27,16 @@ class PatientModelTests(unittest.TestCase):
             item.patient_id = "P999"
         self.assertEqual(item.patient_id, "P001")
 
+    def test_direct_field_mutations_preserve_validation(self) -> None:
+        item = patient()
+        with self.assertRaisesRegex(ValueError, "Age must be between"):
+            item.age = -1
+        with self.assertRaisesRegex(ValueError, "Name cannot be empty"):
+            item.name = "   "
+        with self.assertRaisesRegex(ValueError, "Age must be an integer"):
+            item.age = True
+        self.assertEqual((item.name, item.age), ("Asha", 20))
+
     def test_rejects_invalid_age(self) -> None:
         with self.assertRaises(ValueError):
             patient(age=-1)
