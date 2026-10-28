@@ -13,3 +13,6 @@ Step 8 adds `test_sorting.py` for merge sort and insertion sort. Both functions 
 
 
 Step 9 adds `test_pulseq.py`, which exercises the interactive CLI with injected input and captured output. Run the complete suite from the repository root using `python -m unittest discover -s tests -v`.
+
+
+Step 10 adds regression tests that prevent a patient from waiting in both routine and emergency queues at once. GitHub Actions runs the complete suite on Python 3.10, 3.12, and 3.13 via `.github/workflows/tests.yml`.
