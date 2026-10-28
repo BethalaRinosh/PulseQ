@@ -105,8 +105,33 @@ class PulseQCliTests(unittest.TestCase):
         )
         rendered = "\n".join(output)
         self.assertIn("P1 | Asha", rendered)
-        self.assertIn("Sorted display only", rendered)
+        self.assertIn("Sorted patients display only", rendered)
 
+    def test_emergency_cases_can_be_sorted_by_urgency(self) -> None:
+        app = PulseQApp()
+        app.patients.register(self.make_patient("P1", "Asha"))
+        app.patients.register(self.make_patient("P2", "Bala"))
+        output: list[str] = []
+        app.run(input_fn=InputSequence(["9", "P1", "2", "9", "P2", "5", "17", "4", "1", "n", "0"]), output_fn=output.append)
+        rendered = "\n".join(output)
+        p1_position = rendered.rfind("P1 | Asha | Demo urgency 2")
+        p2_position = rendered.rfind("P2 | Bala | Demo urgency 5")
+        self.assertGreaterEqual(p1_position, 0)
+        self.assertGreater(p2_position, p1_position)
+        self.assertEqual(len(app.emergency_queue), 2)
+
+    def test_emergency_cases_can_be_sorted_by_arrival_order(self) -> None:
+        app = PulseQApp()
+        app.patients.register(self.make_patient("P1", "Asha"))
+        app.patients.register(self.make_patient("P2", "Bala"))
+        output: list[str] = []
+        app.run(input_fn=InputSequence(["9", "P1", "2", "9", "P2", "5", "17", "5", "1", "n", "0"]), output_fn=output.append)
+        rendered = "\n".join(output)
+        p1_position = rendered.rfind("P1 | Asha | Demo urgency 2")
+        p2_position = rendered.rfind("P2 | Bala | Demo urgency 5")
+        self.assertGreaterEqual(p1_position, 0)
+        self.assertGreater(p2_position, p1_position)
+        self.assertEqual(len(app.emergency_queue), 2)
     def test_delete_is_blocked_for_waiting_patient(self) -> None:
         app = PulseQApp()
         app.patients.register(self.make_patient("P1", "Asha"))
