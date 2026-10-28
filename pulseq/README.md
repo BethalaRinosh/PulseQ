@@ -1,6 +1,6 @@
 # PulseQ package
 
-This package contains the application's implemented modules and will grow as later milestones are completed. Planned responsibilities:
+This package contains the implemented modules that power the PulseQ command-line application. Module responsibilities:
 
 - `models.py`: patient and doctor record definitions.
 - `patient_store.py`: custom linked list for patient records.
