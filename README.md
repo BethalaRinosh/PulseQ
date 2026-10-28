@@ -7,8 +7,8 @@ Academic DSA micro-project built with Python 3 and the standard library.
 
 ## Project status
 
-**Current milestone:** Step 9 of 10: menu-driven CLI integration.  
-All core DSA modules are connected to a text menu with input validation, a startup disclaimer, and an in-memory application entry point.
+**Current milestone:** Step 10 of 10: final audit and verification.  
+All core DSA modules are connected to a text menu with input validation, a startup disclaimer, cross-queue consistency checks, and an in-memory application entry point.
 
 ## Features
 
@@ -22,7 +22,7 @@ All core DSA modules are connected to a text menu with input validation, a start
 - Manual linear search finds IDs in any order and returns all case-insensitive partial name matches, including duplicate names.
 - Manual binary search finds a patient ID in a collection already sorted by normalized patient ID. It does not sort the records or use Python's `bisect` module.
 - Manual merge sort and insertion sort return sorted copies of sequences, support a custom key and reverse ordering, preserve the input, and remain stable for equal keys.
-- Menu-driven CLI supports patient CRUD, linear/name/binary search, routine FIFO queue operations, emergency priority queue operations, doctor registration/allocation, availability changes, and sorting patient records by ID/name/age or emergency cases by urgency/arrival order.
+- Menu-driven CLI supports patient CRUD, linear/name/binary search, routine FIFO queue operations, emergency priority queue operations, doctor registration/allocation, availability changes, and sorting patient records by ID/name/age or emergency cases by urgency/arrival order. A patient cannot be waiting in both routine and emergency queues at the same time.
 
 ## Project structure
 
@@ -78,7 +78,7 @@ All core DSA modules are connected to a text menu with input validation, a start
 
 The linked list is implemented directly using nodes with patient and next fields. The patient-record container does not delegate storage to a built-in list. The view_all method returns a list snapshot for display; it is not the backing store. The routine queue likewise uses linked nodes and head/tail pointers rather than a built-in queue. The emergency priority queue implements heap insertion and removal manually; it does not use a built-in priority queue.
 
-## Requirements and current run status
+## Continuous integration\n\nGitHub Actions runs the full unittest suite on Python 3.10, 3.12, and 3.13 for pushes to `main`, pull requests, and manual dispatch. The workflow is defined in `.github/workflows/tests.yml`.\n\n## Requirements and current run status
 
 - Python 3.10 or newer is the target.
 - No third-party packages are required or planned.
@@ -121,7 +121,7 @@ Run all unit and integration tests with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** Eight routine-queue tests previously passed in an isolated harness. Seven emergency-heap behaviour checks passed in an isolated harness covering priority order, stable ties, duplicate IDs, invalid inputs, empty/singleton operations, queue reuse, non-mutating snapshots, and randomized comparison against a reference sort. These harnesses reproduce the committed logic but are not runs of the committed unittest files. A direct test run from a GitHub checkout remains unavailable because the local shell could not resolve github.com.
+**Verification note:** The committed unit and integration test suite is now run by GitHub Actions on Python 3.10, 3.12, and 3.13. See the latest workflow run for the authoritative result. Earlier isolated harness results are historical and are not substitutes for the committed suite.
 
 ## Patient linked-list behaviour
 
@@ -235,4 +235,4 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 9. CLI integration | Implemented; tests added, execution pending user run | Added `main.py` and a menu-driven CLI integrating patient CRUD, searching, sorting, routine/emergency queues, doctor records/allocation, and availability. Sorting supports patient ID/name/age and emergency urgency/arrival order. Added startup disclaimer, field/menu validation, friendly empty/missing handling, delete guards for waiting/assigned patients, and CLI integration tests. |
 | 10. Testing and final documentation | Pending | Run full edge-case audit, fix defects, and finish documentation. |
 
-**Step 9 alignment checkpoint:** All planned user-facing modules are connected through the CLI. Review the project brief and the implemented menu before Step 10's full bug and edge-case audit. The app is still an educational in-memory simulation, not a production hospital system. The sorting algorithms can prepare patient records by ID for binary search, which requires sorted input.
+**Step 10 audit notes:** The cross-module audit found that the same patient could be added to both the routine and emergency waiting queues. The CLI now rejects that conflicting state in either direction, with integration tests. The new CI workflow runs the complete suite across supported Python versions. The application remains an educational in-memory simulation, not a production hospital system. Binary search requires records sorted by normalized patient ID.
