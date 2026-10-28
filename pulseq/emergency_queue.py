@@ -7,8 +7,6 @@ This is not a clinical triage scale. Equal urgency is served FIFO.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterator
-
 from pulseq.models import Patient
 
 
@@ -130,5 +128,5 @@ class EmergencyPriorityQueue:
         return ordered
 
     def clear(self) -> None:
-        """Remove all waiting cases. O(1)."""
+        """Remove all waiting cases. O(n) to release stored references."""
         self._heap.clear()
