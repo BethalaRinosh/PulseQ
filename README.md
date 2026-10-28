@@ -17,7 +17,7 @@ Patient model validation, linked-list CRUD operations, the custom FIFO routine q
 - Patient IDs are trimmed and normalised to uppercase.
 - Patient age validation (integer from 0 through 130).
 - Routine patients flow through a custom linked FIFO queue with enqueue, dequeue, peek, iteration, and clear operations.
-- Emergency cases use a custom binary max-heap: urgency scores range from 1 to 5, higher scores are served first, and equal scores preserve arrival order.
+- Emergency cases use a custom binary max-heap: urgency scores range from 1 to 5, higher scores are served first, equal scores preserve arrival order, and duplicate patient IDs are rejected while queued.
 - Doctor allocation, searching, sorting, and menu-driven CLI are planned for later milestones.
 
 ## Project structure
@@ -88,7 +88,7 @@ The full suite is planned to run with:
 
     python -m unittest discover -s tests -v
 
-**Verification note:** Eight routine-queue tests previously passed in an isolated harness. Five emergency-heap behaviour checks passed in an isolated harness covering priority order, stable ties, invalid inputs, empty/singleton operations, queue reuse, and non-mutating snapshots. These harnesses reproduce the committed logic but are not runs of the committed unittest files. A direct test run from a GitHub checkout remains unavailable because the local shell could not resolve github.com.
+**Verification note:** Eight routine-queue tests previously passed in an isolated harness. Six emergency-heap behaviour checks passed in an isolated harness covering priority order, stable ties, duplicate IDs, invalid inputs, empty/singleton operations, queue reuse, and non-mutating snapshots. These harnesses reproduce the committed logic but are not runs of the committed unittest files. A direct test run from a GitHub checkout remains unavailable because the local shell could not resolve github.com.
 
 ## Patient linked-list behaviour
 
@@ -127,7 +127,7 @@ EmergencyPriorityQueue is a custom binary max-heap backed by a Python list. It s
 - clear(): clear stored entries in O(n) because list-held references must be released.
 - is_empty() and len(queue): O(1).
 
-Invalid patient types raise TypeError; urgency values must be integers 1 through 5, with booleans rejected explicitly.
+Invalid patient types raise TypeError; urgency values must be integers 1 through 5, with booleans rejected explicitly. Duplicate patient IDs are rejected while queued, then become eligible again after dequeue.
 
 ## Big-O complexity
 
@@ -185,7 +185,7 @@ These sources were reviewed for architecture ideas, DSA examples, testing approa
 | 2. Project scaffold and README | Complete | Added package scaffold, project-area READMEs, .gitignore, module responsibilities, target run/test commands, safety limitations, complexity targets, and progress log. |
 | 3. Patient records with linked list | Complete; isolated checks passed | Added validated patient model, custom singly linked list CRUD, duplicate-ID checks, and unit tests. An isolated local harness passed 8 tests; the committed test file has not been run from a repository checkout. |
 | 4. Routine appointment queue | Complete; 8 tests passed in isolated local harness | Added custom linked FIFO queue and tests for FIFO order, empty operations, peek, type checks, clear, and reuse after becoming empty. GitHub checkout execution remains unverified because network access from the local shell was unavailable. |
-| 5. Emergency priority queue | Implemented; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, urgency validation, and unit tests. Five isolated behaviour checks passed; committed unittest execution is still blocked by unavailable GitHub checkout access. |
+| 5. Emergency priority queue | Implemented; isolated audit passed | Added custom binary max-heap, stable FIFO tie-breaking, duplicate-ID protection, urgency validation, and unit tests. Six isolated behaviour checks passed; committed unittest execution is still blocked by unavailable GitHub checkout access. |
 | 6. Doctors and allocation | Pending | Add doctor records and specialization-aware allocation. |
 | 7. Searching | Pending | Implement linear and binary search. |
 | 8. Sorting | Pending | Implement merge sort and insertion sort. |
